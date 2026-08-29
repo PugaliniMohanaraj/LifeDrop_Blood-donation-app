@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { DEMO_NOTIFICATIONS } from '../../data/demo'
-import { EmptyState, NotificationCard } from '../../components/ui'
+import { EmptyState, LoadingSpinner, NotificationCard } from '../../components/ui'
+import { useNotifications } from '../../hooks/useNotifications'
 
 export function DonorNotificationsPage() {
-  const [items, setItems] = useState(DEMO_NOTIFICATIONS)
+  const { items, loading, dismiss } = useNotifications()
+
+  if (loading) return <LoadingSpinner label="Loading notifications…" />
 
   if (!items.length) {
     return (
@@ -22,11 +23,7 @@ export function DonorNotificationsPage() {
       </div>
       <div className="space-y-3">
         {items.map((item) => (
-          <NotificationCard
-            key={item.id}
-            item={item}
-            onDismiss={(id) => setItems((prev) => prev.filter((n) => n.id !== id))}
-          />
+          <NotificationCard key={item.id} item={item} onDismiss={(id) => void dismiss(id)} />
         ))}
       </div>
     </div>

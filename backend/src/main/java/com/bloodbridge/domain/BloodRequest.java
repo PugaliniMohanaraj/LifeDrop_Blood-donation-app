@@ -46,6 +46,8 @@ public class BloodRequest {
 
     private int matchCount;
 
+    private Long acceptedDonorId;
+
     @Column(nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -73,6 +75,8 @@ public class BloodRequest {
     public void setStatus(RequestStatus status) { this.status = status; }
     public int getMatchCount() { return matchCount; }
     public void setMatchCount(int matchCount) { this.matchCount = matchCount; }
+    public Long getAcceptedDonorId() { return acceptedDonorId; }
+    public void setAcceptedDonorId(Long acceptedDonorId) { this.acceptedDonorId = acceptedDonorId; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 }

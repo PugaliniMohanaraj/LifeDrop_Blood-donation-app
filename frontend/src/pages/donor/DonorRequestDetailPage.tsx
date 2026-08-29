@@ -14,7 +14,7 @@ import {
 
 export function DonorRequestDetailPage() {
   const { id } = useParams()
-  const { requests, updateRequestStatus } = useAppData()
+  const { requests, acceptRequest, declineRequest } = useAppData()
   const { toast } = useToast()
   const navigate = useNavigate()
   const [confirmAccept, setConfirmAccept] = useState(false)
@@ -101,10 +101,16 @@ export function DonorRequestDetailPage() {
         confirmLabel="Accept Request"
         onCancel={() => setConfirmAccept(false)}
         onConfirm={() => {
-          updateRequestStatus(request.id, 'DONOR_ACCEPTED')
-          setConfirmAccept(false)
-          toast('Request Accepted. The recipient has been notified.', 'success')
-          navigate('/donor/history')
+          void acceptRequest(request.id)
+            .then(() => {
+              setConfirmAccept(false)
+              toast('Request Accepted. The recipient has been notified.', 'success')
+              navigate('/donor/history')
+            })
+            .catch(() => {
+              toast('Could not accept this request. Please try again.', 'error')
+              setConfirmAccept(false)
+            })
         }}
       />
       <ConfirmationDialog
@@ -115,9 +121,16 @@ export function DonorRequestDetailPage() {
         danger
         onCancel={() => setConfirmDecline(false)}
         onConfirm={() => {
-          setConfirmDecline(false)
-          toast('You declined this request.', 'info')
-          navigate('/donor/requests')
+          void declineRequest(request.id)
+            .then(() => {
+              setConfirmDecline(false)
+              toast('You declined this request.', 'info')
+              navigate('/donor/requests')
+            })
+            .catch(() => {
+              toast('Could not decline this request. Please try again.', 'error')
+              setConfirmDecline(false)
+            })
         }}
       />
     </div>

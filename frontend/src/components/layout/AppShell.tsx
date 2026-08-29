@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Droplet, LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getNavForRole } from '../../config/navigation'
@@ -20,19 +20,27 @@ export function AppShell() {
   }
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-      isActive ? 'bg-brand text-white' : 'text-slate-300 hover:bg-navy-muted hover:text-white'
+    `flex items-center gap-3 rounded-full px-3.5 py-2.5 text-sm font-medium transition ${
+      isActive
+        ? 'bg-brand text-white shadow-md shadow-brand/30'
+        : 'text-slate-300 hover:bg-white/10 hover:text-white'
     }`
 
   const SidebarContent = () => (
     <>
-      <div className="mb-8 flex items-center gap-2 px-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-white">
-          <Droplet className="h-5 w-5" fill="currentColor" />
-        </span>
+      <div className="mb-8 flex items-center gap-3 px-1">
+        <img
+          src="/logo.png"
+          alt=""
+          className="h-11 w-11 rounded-full object-cover ring-2 ring-white/15"
+        />
         <div>
-          <p className="text-sm font-extrabold text-white">BLOOD BRIDGE</p>
-          <p className="text-xs text-slate-400 capitalize">{user.role.replace('_', ' ').toLowerCase()}</p>
+          <p className="text-sm font-extrabold text-white">
+            Life<span className="text-brand-light">Drop</span>
+          </p>
+          <p className="text-xs capitalize text-slate-400">
+            {user.role.replace('_', ' ').toLowerCase()}
+          </p>
         </div>
       </div>
 
@@ -54,16 +62,16 @@ export function AppShell() {
       <button
         type="button"
         onClick={handleLogout}
-        className="mt-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-navy-muted hover:text-white"
+        className="mt-4 flex items-center gap-3 rounded-full px-3.5 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
       >
         <LogOut className="h-4 w-4" aria-hidden />
-        Logout
+        Log out
       </button>
     </>
   )
 
   return (
-    <div className="min-h-screen bg-surface lg:flex">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(227,6,19,0.04),_transparent_45%),#F7F8FA] lg:flex">
       <aside className="hidden w-64 shrink-0 flex-col bg-navy p-4 lg:flex">
         <SidebarContent />
       </aside>
@@ -91,29 +99,31 @@ export function AppShell() {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-white px-4 sm:px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border/80 bg-white/90 px-4 backdrop-blur sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="rounded-lg p-2 text-navy lg:hidden"
+              className="rounded-full p-2 text-navy hover:bg-surface lg:hidden"
               aria-label="Open menu"
               onClick={() => setOpen(true)}
             >
               <Menu className="h-5 w-5" />
             </button>
             <div>
-              <p className="text-sm font-semibold text-navy">{user.fullName}</p>
+              <p className="text-sm font-bold text-navy">{user.fullName}</p>
               <p className="text-xs text-muted">{user.email}</p>
             </div>
           </div>
-          {user.bloodGroup && (
-            <StatusBadge label={`Blood Group ${user.bloodGroup}`} tone="critical" />
-          )}
-          {user.organizationName && user.verified && (
-            <StatusBadge label={`${user.organizationName} ✓ Verified`} tone="success" />
-          )}
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {user.bloodGroup && (
+              <StatusBadge label={`Blood Group ${user.bloodGroup}`} tone="critical" />
+            )}
+            {user.organizationName && user.verified && (
+              <StatusBadge label={`${user.organizationName} ✓ Verified`} tone="success" />
+            )}
+          </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

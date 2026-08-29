@@ -38,7 +38,7 @@ export function Select({
         id={selectId}
         aria-invalid={!!error}
         aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}
-        className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-navy transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
+        className={`w-full rounded-2xl border bg-white px-4 py-3 text-navy transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
           error ? 'border-critical' : 'border-border'
         } ${className}`}
         {...props}

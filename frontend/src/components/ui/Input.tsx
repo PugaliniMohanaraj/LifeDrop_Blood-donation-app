@@ -22,7 +22,7 @@ export function Input({ label, error, hint, id, className = '', ...props }: Inpu
         id={inputId}
         aria-invalid={!!error}
         aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
-        className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-navy placeholder:text-slate-400 transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
+        className={`w-full rounded-2xl border bg-white px-4 py-3 text-navy placeholder:text-slate-400 transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
           error ? 'border-critical' : 'border-border'
         } ${className}`}
         {...props}

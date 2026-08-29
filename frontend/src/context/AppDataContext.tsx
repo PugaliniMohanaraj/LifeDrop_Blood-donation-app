@@ -2,19 +2,38 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
-import { DEMO_ORGS, DEMO_REQUESTS } from '../data/demo'
-import type { BloodRequest, Organization, RequestUrgency, BloodGroup, VerificationStatus } from '../types'
+import {
+  acceptBloodRequest,
+  approveOrganization,
+  cancelBloodRequest,
+  createBloodRequest,
+  declineBloodRequest,
+  fetchOrganizations,
+  fetchPendingOrganizations,
+  fetchRequests,
+  inviteDonor,
+  rejectOrganization,
+} from '../api/bloodBridge'
+import { useAuth } from './AuthContext'
+import type {
+  BloodGroup,
+  BloodRequest,
+  Organization,
+  RequestUrgency,
+  VerificationStatus,
+} from '../types'
 
 interface AppDataContextValue {
   requests: BloodRequest[]
   organizations: Organization[]
+  loading: boolean
+  refresh: () => Promise<void>
   addRequest: (data: {
-    recipientId: string
-    recipientName: string
     bloodGroup: BloodGroup
     units: number
     hospital: string
@@ -22,64 +41,87 @@ interface AppDataContextValue {
     requiredDate: string
     urgency: RequestUrgency
     notes?: string
-  }) => BloodRequest
-  cancelRequest: (id: string) => void
-  updateRequestStatus: (id: string, status: BloodRequest['status']) => void
-  setOrgStatus: (id: string, status: VerificationStatus, rejectionReason?: string) => void
-  addOrganization: (org: Omit<Organization, 'id' | 'status' | 'submittedAt'>) => void
+  }) => Promise<BloodRequest>
+  cancelRequest: (id: string) => Promise<void>
+  acceptRequest: (id: string) => Promise<void>
+  declineRequest: (id: string) => Promise<void>
+  sendInvite: (requestId: string, donorId: string) => Promise<void>
+  setOrgStatus: (id: string, status: VerificationStatus, rejectionReason?: string) => Promise<void>
 }
 
 const AppDataContext = createContext<AppDataContextValue | null>(null)
 
 export function AppDataProvider({ children }: { children: ReactNode }) {
-  const [requests, setRequests] = useState<BloodRequest[]>(DEMO_REQUESTS)
-  const [organizations, setOrganizations] = useState<Organization[]>(DEMO_ORGS)
+  const { user } = useAuth()
+  const [requests, setRequests] = useState<BloodRequest[]>([])
+  const [organizations, setOrganizations] = useState<Organization[]>([])
+  const [loading, setLoading] = useState(false)
 
-  const addRequest: AppDataContextValue['addRequest'] = useCallback((data) => {
-    const req: BloodRequest = {
-      id: `req-${Date.now()}`,
-      ...data,
-      status: data.urgency === 'EMERGENCY' ? 'FINDING_DONORS' : 'FINDING_DONORS',
-      matchCount: data.urgency === 'EMERGENCY' ? 3 : 4,
-      createdAt: new Date().toISOString(),
-      distanceKm: 2.1,
+  const refresh = useCallback(async () => {
+    if (!user) {
+      setRequests([])
+      setOrganizations([])
+      return
     }
-    setRequests((prev) => [req, ...prev])
-    return req
-  }, [])
+    setLoading(true)
+    try {
+      const reqs = await fetchRequests()
+      setRequests(reqs)
+      if (user.role === 'ADMIN') {
+        try {
+          const orgs = await fetchOrganizations()
+          setOrganizations(orgs)
+        } catch {
+          const pending = await fetchPendingOrganizations()
+          setOrganizations(pending)
+        }
+      }
+    } catch {
+      // Keep existing data if offline
+    } finally {
+      setLoading(false)
+    }
+  }, [user])
 
-  const cancelRequest = useCallback((id: string) => {
-    setRequests((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: 'CANCELLED' as const } : r)),
-    )
-  }, [])
+  useEffect(() => {
+    void refresh()
+  }, [refresh])
 
-  const updateRequestStatus = useCallback((id: string, status: BloodRequest['status']) => {
-    setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)))
-  }, [])
-
-  const setOrgStatus = useCallback(
-    (id: string, status: VerificationStatus, rejectionReason?: string) => {
-      setOrganizations((prev) =>
-        prev.map((o) =>
-          o.id === id ? { ...o, status, rejectionReason: rejectionReason || undefined } : o,
-        ),
-      )
+  const addRequest: AppDataContextValue['addRequest'] = useCallback(
+    async (data) => {
+      const created = await createBloodRequest(data)
+      setRequests((prev) => [created, ...prev.filter((r) => r.id !== created.id)])
+      return created
     },
     [],
   )
 
-  const addOrganization = useCallback(
-    (org: Omit<Organization, 'id' | 'status' | 'submittedAt'>) => {
-      setOrganizations((prev) => [
-        {
-          ...org,
-          id: `org-${Date.now()}`,
-          status: 'PENDING',
-          submittedAt: new Date().toISOString(),
-        },
-        ...prev,
-      ])
+  const cancelRequest = useCallback(async (id: string) => {
+    const updated = await cancelBloodRequest(id)
+    setRequests((prev) => prev.map((r) => (r.id === id ? updated : r)))
+  }, [])
+
+  const acceptRequest = useCallback(async (id: string) => {
+    const updated = await acceptBloodRequest(id)
+    setRequests((prev) => prev.map((r) => (r.id === id ? updated : r)))
+  }, [])
+
+  const declineRequest = useCallback(async (id: string) => {
+    await declineBloodRequest(id)
+    setRequests((prev) => prev.filter((r) => r.id !== id))
+  }, [])
+
+  const sendInvite = useCallback(async (requestId: string, donorId: string) => {
+    await inviteDonor(requestId, donorId)
+  }, [])
+
+  const setOrgStatus = useCallback(
+    async (id: string, status: VerificationStatus, rejectionReason?: string) => {
+      const updated =
+        status === 'APPROVED'
+          ? await approveOrganization(id)
+          : await rejectOrganization(id, rejectionReason || 'Application rejected.')
+      setOrganizations((prev) => prev.map((o) => (o.id === id ? updated : o)))
     },
     [],
   )
@@ -88,20 +130,26 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     () => ({
       requests,
       organizations,
+      loading,
+      refresh,
       addRequest,
       cancelRequest,
-      updateRequestStatus,
+      acceptRequest,
+      declineRequest,
+      sendInvite,
       setOrgStatus,
-      addOrganization,
     }),
     [
       requests,
       organizations,
+      loading,
+      refresh,
       addRequest,
       cancelRequest,
-      updateRequestStatus,
+      acceptRequest,
+      declineRequest,
+      sendInvite,
       setOrgStatus,
-      addOrganization,
     ],
   )
 
@@ -113,3 +161,5 @@ export function useAppData() {
   if (!ctx) throw new Error('useAppData must be used within AppDataProvider')
   return ctx
 }
+
+export { apiErrorMessage } from '../api/bloodBridge'

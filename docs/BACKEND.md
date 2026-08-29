@@ -34,7 +34,12 @@ To use in-memory H2 instead: set `spring.profiles.active: h2` in `application.ym
 | POST | /api/auth/register/donor | Public donor signup |
 | POST | /api/auth/register/recipient | Public recipient signup |
 | POST | /api/organizations | Org verification request |
+| GET | /api/stats | Public platform counts |
 | GET/POST | /api/requests | Blood requests |
+| POST | /api/requests/{id}/invite | Recipient invites a donor |
+| POST | /api/requests/{id}/accept | Donor accepts invite |
+| POST | /api/requests/{id}/decline | Donor declines invite |
+| GET | /api/notifications | In-app notifications |
 | GET | /api/matches | Donor matches |
 | GET/POST | /api/admin/organizations/... | Admin verification |
 

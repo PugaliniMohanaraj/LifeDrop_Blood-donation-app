@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Droplet } from 'lucide-react'
-import { Button, Card, ErrorMessage, Input } from '../components/ui'
+import { Button, ErrorMessage, Input } from '../components/ui'
+import { AuthLayout } from '../components/AuthLayout'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { validateLogin, isValidEmail } from '../utils/validation'
@@ -69,75 +69,66 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface">
-      <div className="container-app flex flex-1 items-center justify-center py-12">
-        <Card className="w-full max-w-md">
-          <Link to="/" className="mb-6 flex items-center gap-2 font-extrabold text-brand">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white">
-              <Droplet className="h-4 w-4" fill="currentColor" />
-            </span>
-            BLOOD BRIDGE
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Log in to continue to your LifeDrop dashboard."
+      footer={
+        <p className="text-center text-sm text-muted">
+          Don&apos;t have an account?{' '}
+          <Link to="/register" className="font-semibold text-brand hover:underline">
+            Register
           </Link>
-          <h1 className="text-2xl font-extrabold text-navy">Login</h1>
-          <p className="mt-1 text-sm text-muted">Sign in to continue to your dashboard.</p>
+        </p>
+      }
+    >
+      {formError && (
+        <div className="mb-4">
+          <ErrorMessage
+            title="Could not sign in"
+            message={formError}
+            fix="Check your email and password, then try again."
+          />
+        </div>
+      )}
 
-          {formError && (
-            <div className="mt-4">
-              <ErrorMessage
-                title="Could not sign in"
-                message={formError}
-                fix="Check your email and password, or reset access with support."
-              />
-            </div>
-          )}
+      <form className="space-y-4" onSubmit={onSubmit} noValidate>
+        <Input
+          label="Email"
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          error={errors.email}
+          placeholder="you@example.com"
+        />
+        <Input
+          label="Password"
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={errors.password}
+          placeholder="Your password"
+        />
+        <Button type="submit" className="w-full" loading={loading}>
+          Log In
+        </Button>
+      </form>
 
-          <form className="mt-6 space-y-4" onSubmit={onSubmit} noValidate>
-            <Input
-              label="Email"
-              type="email"
-              name="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => onEmailChange(e.target.value)}
-              error={errors.email}
-              placeholder="you@example.com"
-            />
-            <Input
-              label="Password"
-              type="password"
-              name="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
-              placeholder="Your password"
-            />
-            <Button type="submit" className="w-full" loading={loading}>
-              Login
-            </Button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-muted">
-            Don&apos;t have an account?{' '}
-            <Link to="/register" className="font-semibold text-brand hover:underline">
-              Register
-            </Link>
-          </p>
-
-          <details className="mt-6 rounded-xl bg-surface p-3 text-xs text-muted">
-            <summary className="cursor-pointer font-medium text-navy">Demo accounts</summary>
-            <ul className="mt-2 space-y-1">
-              <li>donor@bloodbridge.com / password123</li>
-              <li>recipient@bloodbridge.com / password123</li>
-              <li>hospital@bloodbridge.com / password123</li>
-              <li>bloodbank@bloodbridge.com / password123</li>
-              <li>admin@bloodbridge.com / password123</li>
-            </ul>
-          </details>
-        </Card>
-      </div>
-    </div>
+      <details className="mt-5 rounded-2xl bg-surface p-3 text-xs text-muted">
+        <summary className="cursor-pointer font-medium text-navy">Demo accounts</summary>
+        <ul className="mt-2 space-y-1">
+          <li>donor@bloodbridge.com / password123</li>
+          <li>recipient@bloodbridge.com / password123</li>
+          <li>hospital@bloodbridge.com / password123</li>
+          <li>bloodbank@bloodbridge.com / password123</li>
+          <li>admin@bloodbridge.com / password123</li>
+        </ul>
+      </details>
+    </AuthLayout>
   )
 }

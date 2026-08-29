@@ -67,6 +67,8 @@ export function validateOrgForm(data: {
   phone: string
   address: string
   staffId: string
+  staffName: string
+  password: string
   documentName: string
 }): FieldErrors {
   const errors: FieldErrors = {}
@@ -80,6 +82,10 @@ export function validateOrgForm(data: {
   else if (!isValidPhone(data.phone)) errors.phone = 'Please enter a valid phone number.'
   if (!required(data.address)) errors.address = 'Please enter the organization address.'
   if (!required(data.staffId)) errors.staffId = 'Please enter your staff ID.'
+  if (!required(data.staffName)) errors.staffName = 'Please enter the staff contact name.'
+  if (!required(data.password)) errors.password = 'Please create a password.'
+  else if (!isStrongPassword(data.password))
+    errors.password = 'Password must be at least 8 characters.'
   if (!required(data.documentName))
     errors.documentName = 'Please attach a supporting document.'
   return errors

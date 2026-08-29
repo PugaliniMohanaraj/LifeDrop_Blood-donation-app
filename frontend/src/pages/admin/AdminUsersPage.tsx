@@ -8,7 +8,7 @@ export function AdminUsersPage() {
     { name: 'Meena Fernando', role: 'Blood Bank', email: 'bloodbank@bloodbridge.com' },
   ]
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <h1 className="text-2xl font-extrabold text-navy">Users</h1>
       <p className="text-sm text-muted">Overview of accounts on the platform.</p>
       {users.map((u) => (

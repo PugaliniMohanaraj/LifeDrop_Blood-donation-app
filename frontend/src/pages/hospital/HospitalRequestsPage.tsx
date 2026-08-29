@@ -5,7 +5,7 @@ import { Card, StatusBadge, requestStatusMeta } from '../../components/ui'
 export function HospitalRequestsPage() {
   const { requests } = useAppData()
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <h1 className="text-2xl font-extrabold text-navy">Blood Requests</h1>
       <p className="text-sm text-muted">Monitor patient and emergency requests linked to your facility.</p>
       {requests.map((r) => {

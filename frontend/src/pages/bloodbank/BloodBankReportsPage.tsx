@@ -2,7 +2,7 @@ import { Card } from '../../components/ui'
 
 export function BloodBankReportsPage() {
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <h1 className="text-2xl font-extrabold text-navy">Reports</h1>
       <p className="text-sm text-muted">A simple summary for weekly planning.</p>
       <div className="grid gap-4 sm:grid-cols-2">

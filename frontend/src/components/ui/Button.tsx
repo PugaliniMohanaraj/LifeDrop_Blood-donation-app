@@ -11,18 +11,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand text-white hover:bg-brand-dark shadow-sm',
+  primary: 'bg-brand text-white hover:bg-brand-dark shadow-md shadow-brand/20',
   secondary: 'bg-navy text-white hover:bg-navy-muted shadow-sm',
   danger: 'bg-critical text-white hover:bg-red-800 shadow-sm',
   ghost: 'bg-transparent text-navy hover:bg-slate-100',
-  outline: 'border border-border bg-white text-navy hover:bg-slate-50',
-  emergency: 'bg-critical text-white hover:bg-red-800 shadow-sm ring-2 ring-critical/30',
+  outline: 'border-2 border-brand bg-white text-brand hover:bg-critical-bg/40',
+  emergency: 'bg-critical text-white hover:bg-red-800 shadow-md shadow-critical/25',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'px-3 py-1.5 text-sm min-h-9',
-  md: 'px-4 py-2.5 text-sm min-h-11',
-  lg: 'px-6 py-3 text-base min-h-12',
+  sm: 'px-3.5 py-1.5 text-sm min-h-9 rounded-full',
+  md: 'px-5 py-2.5 text-sm min-h-11 rounded-full',
+  lg: 'px-7 py-3 text-base min-h-12 rounded-full',
 }
 
 export function Button({
@@ -38,7 +38,7 @@ export function Button({
     <button
       type="button"
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {loading && (

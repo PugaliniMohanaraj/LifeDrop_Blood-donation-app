@@ -35,7 +35,7 @@ export function AdminVerifyPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <div>
         <h1 className="text-2xl font-extrabold text-navy">Organization Verification</h1>
         <p className="text-sm text-muted">Approve trusted organizations or reject with a clear reason.</p>
@@ -146,12 +146,14 @@ export function AdminVerifyPage() {
         confirmLabel="Approve"
         onCancel={() => setApproveOpen(false)}
         onConfirm={() => {
-          if (selected) {
-            setOrgStatus(selected.id, 'APPROVED')
-            toast(`${selected.name} approved.`, 'success')
-          }
-          setApproveOpen(false)
-          setSelected(null)
+          if (!selected) return
+          void setOrgStatus(selected.id, 'APPROVED')
+            .then(() => {
+              toast(`${selected.name} approved. Staff can now log in.`, 'success')
+              setApproveOpen(false)
+              setSelected(null)
+            })
+            .catch(() => toast('Could not approve this organization.', 'error'))
         }}
       />
 
@@ -182,14 +184,16 @@ export function AdminVerifyPage() {
                   setReasonError('Please provide a reason for rejection.')
                   return
                 }
-                if (selected) {
-                  setOrgStatus(selected.id, 'REJECTED', reason.trim())
-                  toast('Application rejected. The organization can revise and reapply.', 'warning')
-                }
-                setRejectOpen(false)
-                setSelected(null)
-                setReason('')
-                setReasonError('')
+                if (!selected) return
+                void setOrgStatus(selected.id, 'REJECTED', reason.trim())
+                  .then(() => {
+                    toast('Application rejected. The organization can revise and reapply.', 'warning')
+                    setRejectOpen(false)
+                    setSelected(null)
+                    setReason('')
+                    setReasonError('')
+                  })
+                  .catch(() => toast('Could not reject this application.', 'error'))
               }}
             >
               Reject

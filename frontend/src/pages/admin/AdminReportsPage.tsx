@@ -2,7 +2,7 @@ import { Card } from '../../components/ui'
 
 export function AdminReportsPage() {
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <h1 className="text-2xl font-extrabold text-navy">Reports</h1>
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>

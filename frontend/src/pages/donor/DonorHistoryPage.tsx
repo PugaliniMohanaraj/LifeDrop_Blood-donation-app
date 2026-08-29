@@ -17,7 +17,7 @@ export function DonorHistoryPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <div>
         <h1 className="text-2xl font-extrabold text-navy">History</h1>
         <p className="text-sm text-muted">Your past responses and completed donations.</p>

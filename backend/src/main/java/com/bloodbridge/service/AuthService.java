@@ -29,6 +29,21 @@ public class AuthService {
     }
 
     @Transactional
+    public MessageResponse changePassword(UserAccount user, ChangePasswordRequest req) {
+        UserAccount managed = users.findById(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Account not found."));
+        if (!encoder.matches(req.currentPassword(), managed.getPasswordHash())) {
+            throw new IllegalArgumentException("Current password is incorrect.");
+        }
+        if (req.currentPassword().equals(req.newPassword())) {
+            throw new IllegalArgumentException("New password must be different from your current password.");
+        }
+        managed.setPasswordHash(encoder.encode(req.newPassword()));
+        users.save(managed);
+        return new MessageResponse("Password updated successfully.");
+    }
+
+    @Transactional
     public AuthResponse login(LoginRequest req) {
         UserAccount user = users.findByEmailIgnoreCase(req.email().trim())
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -82,6 +97,8 @@ public class AuthService {
 
     @Transactional
     public MessageResponse registerOrganization(OrgRegisterRequest req) {
+        ensureUniqueEmail(req.email());
+
         Organization org = new Organization();
         org.setName(req.name().trim());
         org.setType(req.type());
@@ -93,6 +110,20 @@ public class AuthService {
         org.setDocumentName(req.documentName().trim());
         org.setStatus(VerificationStatus.PENDING);
         organizations.save(org);
+
+        UserRole role = req.type() == OrgType.HOSPITAL ? UserRole.HOSPITAL : UserRole.BLOOD_BANK;
+        UserAccount staff = new UserAccount();
+        staff.setFullName(req.staffName().trim());
+        staff.setEmail(req.email().trim().toLowerCase());
+        staff.setPhone(req.phone().trim());
+        staff.setPasswordHash(encoder.encode(req.password()));
+        staff.setRole(role);
+        staff.setOrganizationId(org.getId());
+        staff.setOrganizationName(org.getName());
+        staff.setLocation(req.address().trim());
+        staff.setVerified(false);
+        users.save(staff);
+
         return new MessageResponse(
                 "Application submitted. Your organization is currently under review (Pending Verification).");
     }

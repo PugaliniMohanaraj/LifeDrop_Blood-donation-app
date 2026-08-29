@@ -38,7 +38,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+        className="relative z-10 w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl shadow-brand/10"
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <h2 id="modal-title" className="text-lg font-bold text-navy">

@@ -1,13 +1,17 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, Building2, CheckCircle2 } from 'lucide-react'
-import { Button, Card, Input, Select, StatusBadge } from '../components/ui'
+import { Building2, CheckCircle2 } from 'lucide-react'
+import { Button, Card, ErrorMessage, Input, Select, StatusBadge } from '../components/ui'
+import { BrandMark } from '../components/BrandMark'
+import { apiErrorMessage, registerOrganization } from '../api/bloodBridge'
 import { validateOrgForm, isValidEmail, isValidPhone } from '../utils/validation'
 import type { OrgType } from '../types'
+
 
 export function OrganizationRegisterPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [form, setForm] = useState({
     name: '',
@@ -17,6 +21,8 @@ export function OrganizationRegisterPage() {
     phone: '',
     address: '',
     staffId: '',
+    staffName: '',
+    password: '',
     documentName: '',
   })
 
@@ -41,24 +47,47 @@ export function OrganizationRegisterPage() {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
-    const v = validateOrgForm({
-      ...form,
-      type: form.type,
-    })
+    setFormError('')
+    const v = validateOrgForm({ ...form, type: form.type })
     setErrors(v)
-    if (Object.keys(v).length) return
+    if (Object.keys(v).length || !form.type) return
+
     setLoading(true)
-    window.setTimeout(() => {
-      setLoading(false)
-      setSubmitted(true)
-    }, 600)
+    void registerOrganization({
+      name: form.name,
+      type: form.type,
+      registrationNumber: form.registrationNumber,
+      email: form.email.trim().toLowerCase(),
+      phone: form.phone,
+      address: form.address,
+      staffId: form.staffId,
+      staffName: form.staffName,
+      password: form.password,
+      documentName: form.documentName,
+    })
+      .then(() => {
+        setSubmitted(true)
+      })
+      .catch((err) => {
+        setFormError(
+          apiErrorMessage(
+            err,
+            'Could not submit the application. Please check your details and try again.',
+          ),
+        )
+      })
+      .finally(() => setLoading(false))
   }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-surface py-12">
-        <div className="container-app mx-auto max-w-lg">
-          <Card className="text-center">
+      <div className="relative min-h-screen overflow-hidden bg-white py-12">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(227,6,19,0.08),_transparent_50%)]"
+          aria-hidden
+        />
+        <div className="container-app relative mx-auto max-w-lg">
+          <Card className="rounded-3xl p-8 text-center shadow-xl shadow-brand/5">
             <CheckCircle2 className="mx-auto h-12 w-12 text-success" aria-hidden />
             <h1 className="mt-4 text-2xl font-extrabold text-navy">Application Submitted</h1>
             <p className="mt-2 text-muted">
@@ -69,14 +98,16 @@ export function OrganizationRegisterPage() {
               <StatusBadge label="Pending Verification" tone="pending" icon={<span>🟡</span>} />
             </div>
             <p className="mt-4 text-sm text-muted">
-              You cannot access organization features until an admin approves your application.
+              After approval, sign in with this email and the password you created.
             </p>
-            <Link
-              to="/"
-              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark"
-            >
-              Back to Home
-            </Link>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <Link to="/login">
+                <Button>Go to Login</Button>
+              </Link>
+              <Link to="/">
+                <Button variant="outline">Back to Home</Button>
+              </Link>
+            </div>
           </Card>
         </div>
       </div>
@@ -84,15 +115,16 @@ export function OrganizationRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface py-10">
-      <div className="container-app mx-auto max-w-xl">
-        <Link
-          to="/register"
-          className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-navy"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to registration
-        </Link>
-        <Card>
+    <div className="relative min-h-screen overflow-hidden bg-white py-10">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(227,6,19,0.07),_transparent_50%)]"
+        aria-hidden
+      />
+      <div className="container-app relative mx-auto max-w-xl">
+        <div className="mb-6">
+          <BrandMark />
+        </div>
+        <Card className="rounded-3xl p-6 shadow-xl shadow-brand/5 sm:p-8">
           <div className="mb-2 flex items-center gap-2 text-brand">
             <Building2 className="h-6 w-6" />
             <span className="font-extrabold">Organization Verification</span>
@@ -100,8 +132,14 @@ export function OrganizationRegisterPage() {
           <h1 className="text-2xl font-extrabold text-navy">Register your organization</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             To protect patients and donors, hospital and blood bank accounts must be verified before
-            accessing organization features.
+            accessing LifeDrop organization features.
           </p>
+
+          {formError && (
+            <div className="mt-4">
+              <ErrorMessage title="Could not submit" message={formError} />
+            </div>
+          )}
 
           <form className="mt-6 space-y-4" onSubmit={onSubmit} noValidate>
             <Input
@@ -132,12 +170,30 @@ export function OrganizationRegisterPage() {
               hint="Official government or health authority registration ID"
             />
             <Input
+              label="Staff Contact Name"
+              required
+              value={form.staffName}
+              onChange={(e) => set('staffName', e.target.value)}
+              error={errors.staffName}
+            />
+            <Input
               label="Official Email"
               type="email"
               required
               value={form.email}
               onChange={(e) => set('email', e.target.value)}
               error={errors.email}
+              hint="Used to sign in after verification"
+            />
+            <Input
+              label="Password"
+              type="password"
+              required
+              value={form.password}
+              onChange={(e) => set('password', e.target.value)}
+              error={errors.password}
+              hint="At least 8 characters — use this after admin approval"
+              autoComplete="new-password"
             />
             <Input
               label="Phone"

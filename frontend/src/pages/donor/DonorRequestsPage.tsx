@@ -17,7 +17,7 @@ export function DonorRequestsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <div>
         <h1 className="text-2xl font-extrabold text-navy">Blood Requests</h1>
         <p className="text-sm text-muted">Open a request to accept or decline. You stay in control.</p>

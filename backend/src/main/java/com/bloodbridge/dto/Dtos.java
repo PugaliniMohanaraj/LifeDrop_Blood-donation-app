@@ -44,6 +44,9 @@ public final class Dtos {
             @NotBlank(message = "Please enter a phone number.") String phone,
             @NotBlank(message = "Please enter the organization address.") String address,
             @NotBlank(message = "Please enter your staff ID.") String staffId,
+            @NotBlank(message = "Please enter the staff contact name.") String staffName,
+            @NotBlank(message = "Please create a password.")
+            @Size(min = 8, message = "Password must be at least 8 characters.") String password,
             @NotBlank(message = "Please attach a supporting document.") String documentName
     ) {}
 
@@ -67,8 +70,47 @@ public final class Dtos {
             @NotNull(message = "Please choose an availability status.") AvailabilityStatus availability
     ) {}
 
+    public record ChangePasswordRequest(
+            @NotBlank(message = "Please enter your current password.") String currentPassword,
+            @NotBlank(message = "Please enter a new password.")
+            @Size(min = 8, message = "Password must be at least 8 characters.") String newPassword
+    ) {}
+
     public record StockUpdate(
+            @NotBlank(message = "Please select a blood group.") String bloodGroup,
             @Min(value = 0, message = "Units cannot be negative.") int units
+    ) {}
+
+    public record InviteRequest(
+            @NotNull(message = "Please choose a donor.") Long donorId
+    ) {}
+
+    public record InviteResponse(
+            Long id,
+            Long requestId,
+            Long donorId,
+            Long recipientId,
+            InviteStatus status,
+            String createdAt
+    ) {}
+
+    public record NotificationResponse(
+            Long id,
+            String title,
+            String message,
+            String type,
+            boolean read,
+            String createdAt,
+            Long relatedRequestId,
+            Long relatedInviteId
+    ) {}
+
+    public record PlatformStats(
+            long activeDonors,
+            long requestsToday,
+            long hospitals,
+            long pendingInvites,
+            long completedRequests
     ) {}
 
     public record AuthResponse(String token, UserResponse user) {}

@@ -18,12 +18,7 @@ export function RecipientRequestsPage() {
   const { toast } = useToast()
   const [cancelId, setCancelId] = useState<string | null>(null)
 
-  const mine = requests.filter(
-    (r) =>
-      r.recipientId === user?.id ||
-      r.recipientName === user?.fullName ||
-      user?.email === 'recipient@bloodbridge.com',
-  )
+  const mine = requests.filter((r) => r.recipientId === user?.id)
 
   if (!mine.length) {
     return (
@@ -39,7 +34,7 @@ export function RecipientRequestsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold text-navy">My Requests</h1>
@@ -91,9 +86,16 @@ export function RecipientRequestsPage() {
         danger
         onCancel={() => setCancelId(null)}
         onConfirm={() => {
-          if (cancelId) cancelRequest(cancelId)
-          setCancelId(null)
-          toast('Blood request cancelled.', 'info')
+          if (!cancelId) return
+          void cancelRequest(cancelId)
+            .then(() => {
+              setCancelId(null)
+              toast('Blood request cancelled.', 'info')
+            })
+            .catch(() => {
+              toast('Could not cancel the request. Please try again.', 'error')
+              setCancelId(null)
+            })
         }}
       />
     </div>

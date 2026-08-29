@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom'
-import { Menu, X, Droplet } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import { publicLinks } from '../../config/navigation'
+import { publicLinks } from '../../config/publicNav'
 import { useAuth } from '../../context/AuthContext'
+import { BrandMark } from '../BrandMark'
 
 function dashboardForRole(role: string | undefined) {
   switch (role) {
@@ -24,31 +25,52 @@ function dashboardForRole(role: string | undefined) {
 export function PublicNavbar() {
   const [open, setOpen] = useState(false)
   const { user } = useAuth()
+  const location = useLocation()
   const dashboardPath = dashboardForRole(user?.role)
 
-  return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-white/95 backdrop-blur">
-      <div className="container-app flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-extrabold tracking-tight text-brand">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand text-white">
-            <Droplet className="h-5 w-5" fill="currentColor" />
-          </span>
-          <span className="text-lg">BLOOD BRIDGE</span>
-        </Link>
+  const isActive = (to: string) => {
+    if (to === '/') return location.pathname === '/' && !location.hash
+    if (to.startsWith('/#')) {
+      return location.hash === to.slice(1) || (location.pathname === '/' && location.hash === to.slice(1))
+    }
+    return location.pathname === to
+  }
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label="Main">
-          {publicLinks.map((l) => (
-            <a key={l.to} href={l.to} className="text-sm font-medium text-muted hover:text-navy">
-              {l.label}
-            </a>
-          ))}
+  return (
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-white/90 shadow-[0_1px_0_rgba(11,28,51,0.04)] backdrop-blur-md">
+      <div className="container-app flex h-[4.75rem] items-center justify-between gap-5 lg:h-[5.25rem]">
+        <BrandMark />
+
+        <nav className="hidden items-center gap-1 xl:flex" aria-label="Main">
+          {publicLinks.map((l) => {
+            const active = l.to === '/' ? location.pathname === '/' && !location.hash : isActive(l.to)
+            return (
+              <a
+                key={l.to}
+                href={l.to}
+                className={`relative rounded-full px-3.5 py-2 text-[0.95rem] font-semibold tracking-tight transition ${
+                  active
+                    ? 'text-brand'
+                    : 'text-navy/75 hover:bg-critical-bg/40 hover:text-brand'
+                }`}
+              >
+                {l.label}
+                {active && (
+                  <span
+                    className="absolute inset-x-3.5 -bottom-0.5 mx-auto h-[3px] w-auto rounded-full bg-brand"
+                    aria-hidden
+                  />
+                )}
+              </a>
+            )
+          })}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           {dashboardPath ? (
             <Link
               to={dashboardPath}
-              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-dark"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[0.95rem] font-bold text-white shadow-md shadow-brand/20 transition hover:bg-brand-dark"
             >
               Go to Dashboard
             </Link>
@@ -56,13 +78,13 @@ export function PublicNavbar() {
             <>
               <Link
                 to="/login"
-                className="inline-flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-navy hover:bg-slate-100"
+                className="inline-flex min-h-12 items-center rounded-full border-2 border-brand bg-white px-6 py-2.5 text-[0.95rem] font-bold text-brand transition hover:bg-critical-bg/50"
               >
-                Login
+                Log In
               </Link>
               <Link
                 to="/register"
-                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-dark"
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[0.95rem] font-bold text-white shadow-md shadow-brand/20 transition hover:bg-brand-dark"
               >
                 Register
               </Link>
@@ -72,7 +94,7 @@ export function PublicNavbar() {
 
         <button
           type="button"
-          className="rounded-lg p-2 text-navy md:hidden"
+          className="rounded-full p-2.5 text-navy hover:bg-surface xl:hidden"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -82,40 +104,46 @@ export function PublicNavbar() {
       </div>
 
       {open && (
-        <div className="border-t border-border bg-white px-4 py-4 md:hidden">
-          <nav className="flex flex-col gap-3" aria-label="Mobile">
+        <div className="border-t border-border bg-white px-5 py-5 xl:hidden">
+          <nav className="flex flex-col gap-1" aria-label="Mobile">
             {publicLinks.map((l) => (
               <a
                 key={l.to}
                 href={l.to}
-                className="text-sm font-medium text-navy"
+                className="rounded-xl px-3 py-3 text-base font-semibold text-navy hover:bg-critical-bg/40 hover:text-brand"
                 onClick={() => setOpen(false)}
               >
                 {l.label}
               </a>
             ))}
-            {dashboardPath ? (
-              <Link
-                to={dashboardPath}
-                onClick={() => setOpen(false)}
-                className="font-semibold text-brand"
-              >
-                Go to Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link to="/login" onClick={() => setOpen(false)} className="font-medium">
-                  Login
-                </Link>
+            <div className="mt-3 flex flex-col gap-2 border-t border-border pt-4">
+              {dashboardPath ? (
                 <Link
-                  to="/register"
+                  to={dashboardPath}
                   onClick={() => setOpen(false)}
-                  className="font-semibold text-brand"
+                  className="rounded-full bg-brand px-4 py-3 text-center text-base font-bold text-white"
                 >
-                  Register
+                  Go to Dashboard
                 </Link>
-              </>
-            )}
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setOpen(false)}
+                    className="rounded-full border-2 border-brand px-4 py-3 text-center text-base font-bold text-brand"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setOpen(false)}
+                    className="rounded-full bg-brand px-4 py-3 text-center text-base font-bold text-white"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
           </nav>
         </div>
       )}

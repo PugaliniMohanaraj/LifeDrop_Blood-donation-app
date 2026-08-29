@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import { fetchOrganization } from '../../api/bloodBridge'
 import { useAppData } from '../../context/AppDataContext'
 import { useToast } from '../../context/ToastContext'
 import {
@@ -9,23 +10,45 @@ import {
   ConfirmationDialog,
   EmptyState,
   Input,
+  LoadingSpinner,
   Modal,
   StatusBadge,
   verificationLabel,
   verificationTone,
 } from '../../components/ui'
+import type { Organization } from '../../types'
 
 export function AdminVerifyDetailPage() {
   const { id } = useParams()
   const { organizations, setOrgStatus } = useAppData()
   const { toast } = useToast()
   const navigate = useNavigate()
-  const org = organizations.find((o) => o.id === id)
+  const [org, setOrg] = useState<Organization | null>(
+    () => organizations.find((o) => o.id === id) || null,
+  )
+  const [loading, setLoading] = useState(!org)
 
   const [confirmApprove, setConfirmApprove] = useState(false)
   const [rejectOpen, setRejectOpen] = useState(false)
   const [reason, setReason] = useState('')
   const [reasonError, setReasonError] = useState('')
+
+  useEffect(() => {
+    const cached = organizations.find((o) => o.id === id)
+    if (cached) {
+      setOrg(cached)
+      setLoading(false)
+      return
+    }
+    if (!id) return
+    setLoading(true)
+    void fetchOrganization(id)
+      .then(setOrg)
+      .catch(() => setOrg(null))
+      .finally(() => setLoading(false))
+  }, [id, organizations])
+
+  if (loading) return <LoadingSpinner label="Loading application…" />
 
   if (!org) {
     return (
@@ -44,10 +67,13 @@ export function AdminVerifyDetailPage() {
       setReasonError('Please provide a reason for rejection.')
       return
     }
-    setOrgStatus(org.id, 'REJECTED', reason.trim())
-    setRejectOpen(false)
-    toast('Organization rejected. They can correct and re-apply.', 'warning')
-    navigate('/admin/verify')
+    void setOrgStatus(org.id, 'REJECTED', reason.trim())
+      .then(() => {
+        setRejectOpen(false)
+        toast('Organization rejected. They can correct and re-apply.', 'warning')
+        navigate('/admin/verify')
+      })
+      .catch(() => toast('Could not reject this application. Please try again.', 'error'))
   }
 
   return (
@@ -113,10 +139,16 @@ export function AdminVerifyDetailPage() {
         confirmLabel="Approve"
         onCancel={() => setConfirmApprove(false)}
         onConfirm={() => {
-          setOrgStatus(org.id, 'APPROVED')
-          setConfirmApprove(false)
-          toast('Organization approved. Verification status updated.', 'success')
-          navigate('/admin/verify')
+          void setOrgStatus(org.id, 'APPROVED')
+            .then(() => {
+              setConfirmApprove(false)
+              toast('Organization approved. Staff can now log in.', 'success')
+              navigate('/admin/verify')
+            })
+            .catch(() => {
+              toast('Could not approve this organization. Please try again.', 'error')
+              setConfirmApprove(false)
+            })
         }}
       />
 

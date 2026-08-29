@@ -6,10 +6,8 @@ import {
   Droplets,
   Bell,
   History,
-  LogOut,
   ClipboardList,
   Users,
-  Building2,
   Package,
   Search,
   FileBarChart,
@@ -71,11 +69,3 @@ export function getNavForRole(role: UserRole): NavItem[] {
       return []
   }
 }
-
-export const publicLinks = [
-  { label: 'Home', to: '/' },
-  { label: 'How It Works', to: '/#how-it-works' },
-  { label: 'About', to: '/#about' },
-]
-
-export { Building2, LogOut }

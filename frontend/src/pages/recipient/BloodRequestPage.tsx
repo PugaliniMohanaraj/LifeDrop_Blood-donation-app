@@ -75,22 +75,23 @@ export function BloodRequestPage() {
   const doSubmit = () => {
     if (!user) return
     setLoading(true)
-    window.setTimeout(() => {
-      addRequest({
-        recipientId: user.id,
-        recipientName: user.fullName,
-        bloodGroup: bloodGroup as typeof BLOOD_GROUPS[number],
-        units: Number(units),
-        hospital,
-        location,
-        requiredDate,
-        urgency,
-        notes: notes || undefined,
+    void addRequest({
+      bloodGroup: bloodGroup as (typeof BLOOD_GROUPS)[number],
+      units: Number(units),
+      hospital,
+      location,
+      requiredDate,
+      urgency,
+      notes: notes || undefined,
+    })
+      .then(() => {
+        setSubmitted(true)
+        toast('Blood request created. Finding suitable donors…', 'success')
       })
-      setLoading(false)
-      setSubmitted(true)
-      toast('Blood request created. Finding suitable donors…', 'success')
-    }, 500)
+      .catch(() => {
+        toast('Could not create the blood request. Please try again.', 'error')
+      })
+      .finally(() => setLoading(false))
   }
 
   const onFinalSubmit = (e: FormEvent) => {

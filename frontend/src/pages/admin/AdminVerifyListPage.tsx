@@ -16,7 +16,7 @@ export function AdminVerifyListPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <h1 className="text-2xl font-extrabold text-navy">Organization Verification</h1>
       <p className="text-sm text-muted">Review each application before granting access.</p>
       {pending.map((o) => (

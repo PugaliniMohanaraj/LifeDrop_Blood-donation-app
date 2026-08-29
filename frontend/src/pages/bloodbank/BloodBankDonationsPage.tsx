@@ -8,7 +8,7 @@ const donations = [
 
 export function BloodBankDonationsPage() {
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto w-full max-w-none space-y-4">
       <h1 className="text-2xl font-extrabold text-navy">Donations</h1>
       <p className="text-sm text-muted">Recent donations recorded at this blood bank.</p>
       {donations.map((d) => (
