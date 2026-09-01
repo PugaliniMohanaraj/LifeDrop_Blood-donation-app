@@ -23,14 +23,12 @@ export function RecipientDashboard() {
         subtitle="Create a request and find suitable donors nearby."
       >
         <Link to="/recipient/request">
-          <Button className="bg-white text-brand hover:bg-slate-100 shadow-none">
+          <Button variant="hero">
             <Droplet className="h-4 w-4" /> Request Blood
           </Button>
         </Link>
         <Link to="/recipient/requests">
-          <Button variant="outline" className="border-white text-white hover:bg-white/10">
-            View Active Requests
-          </Button>
+          <Button variant="heroOutline">View Active Requests</Button>
         </Link>
       </HeroPanel>
 

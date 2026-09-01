@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Building2, CheckCircle2 } from 'lucide-react'
 import { Button, Card, ErrorMessage, Input, Select, StatusBadge } from '../components/ui'
 import { BrandMark } from '../components/BrandMark'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { apiErrorMessage, registerOrganization } from '../api/bloodBridge'
 import { validateOrgForm, isValidEmail, isValidPhone } from '../utils/validation'
 import type { OrgType } from '../types'
@@ -81,7 +82,10 @@ export function OrganizationRegisterPage() {
 
   if (submitted) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-white py-12">
+      <div className="relative min-h-screen overflow-hidden bg-surface py-12">
+        <div className="absolute right-5 top-5 z-10 sm:right-8">
+          <ThemeToggle />
+        </div>
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(227,6,19,0.08),_transparent_50%)]"
           aria-hidden
@@ -115,7 +119,10 @@ export function OrganizationRegisterPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white py-10">
+    <div className="relative min-h-screen overflow-hidden bg-surface py-10">
+      <div className="absolute right-5 top-5 z-10 sm:right-8">
+        <ThemeToggle />
+      </div>
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(227,6,19,0.07),_transparent_50%)]"
         aria-hidden

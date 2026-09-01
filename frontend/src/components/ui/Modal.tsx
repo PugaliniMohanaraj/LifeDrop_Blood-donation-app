@@ -38,7 +38,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="relative z-10 w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl shadow-brand/10"
+        className="relative z-10 w-full max-w-lg rounded-3xl bg-card p-6 shadow-xl shadow-brand/10"
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <h2 id="modal-title" className="text-lg font-bold text-navy">
@@ -47,7 +47,7 @@ export function Modal({ open, title, onClose, children, footer }: ModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-muted hover:bg-slate-100 hover:text-navy"
+            className="rounded-lg p-1.5 text-muted hover:bg-surface hover:text-foreground"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

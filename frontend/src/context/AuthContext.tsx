@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import api from '../api/client'
+import { mergeProfilePhoto } from '../components/UserAvatar'
 import { DEMO_USERS } from '../data/demo'
 import type { AvailabilityStatus, BloodGroup, User, UserRole } from '../types'
 
@@ -61,6 +62,7 @@ function mapApiUser(u: Record<string, unknown>): User {
     organizationId: u.organizationId != null ? String(u.organizationId) : undefined,
     organizationName: (u.organizationName as string) || undefined,
     verified: Boolean(u.verified),
+    photoUrl: (u.photoUrl as string) || undefined,
   }
 }
 
@@ -106,7 +108,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, password: string) => {
       try {
         const { data } = await api.post('/auth/login', { email, password })
-        persist(mapApiUser(data.user), data.token)
+        const mapped = mapApiUser(data.user)
+        const prev = loadUser()
+        persist(mergeProfilePhoto(prev, mapped), data.token)
         return { ok: true as const }
       } catch (err: unknown) {
         const axiosErr = err as {

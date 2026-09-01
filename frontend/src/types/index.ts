@@ -33,6 +33,7 @@ export interface User {
   organizationId?: string
   organizationName?: string
   verified?: boolean
+  photoUrl?: string
 }
 
 export interface Organization {

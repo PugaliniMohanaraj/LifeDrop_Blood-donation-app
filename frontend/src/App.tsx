@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import { ToastProvider } from './context/ToastContext'
 import { AppDataProvider } from './context/AppDataContext'
 import { RequireAuth } from './components/auth/RequireAuth'
@@ -125,12 +126,14 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppDataProvider>
-        <ToastProvider>
-          <AppRoutes />
-        </ToastProvider>
-      </AppDataProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppDataProvider>
+          <ToastProvider>
+            <AppRoutes />
+          </ToastProvider>
+        </AppDataProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

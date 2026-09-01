@@ -13,7 +13,7 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-navy sm:text-3xl">{title}</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
       {action}
@@ -50,14 +50,14 @@ export function StatCard({
   tone?: 'navy' | 'brand' | 'success' | 'warning' | 'critical'
 }) {
   const tones = {
-    navy: 'text-navy',
+    navy: 'text-foreground',
     brand: 'text-brand',
     success: 'text-success',
     warning: 'text-warning',
     critical: 'text-critical',
   }
   return (
-    <div className="rounded-2xl border border-border bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted">{label}</p>
       <p className={`mt-2 text-3xl font-extrabold ${tones[tone]}`}>{value}</p>
     </div>

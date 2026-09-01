@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiErrorMessage, changePassword } from '../../api/bloodBridge'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
 import { useToast } from '../../context/ToastContext'
 import { Button, Card, Input } from '../../components/ui'
 import { isStrongPassword } from '../../utils/validation'
@@ -31,6 +32,7 @@ function loadPrefs(): Prefs {
 
 export function AdminSettingsPage() {
   const { user, updateProfile, logout } = useAuth()
+  const { theme, setTheme } = useTheme()
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -95,6 +97,35 @@ export function AdminSettingsPage() {
         <h1 className="text-2xl font-extrabold text-navy">Settings</h1>
         <p className="text-sm text-muted">Manage your admin account and alert preferences.</p>
       </div>
+
+      <Card className="space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-navy">Appearance</h2>
+          <p className="text-sm text-muted">Choose light or dark mode for the whole app.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {(['light', 'dark'] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => {
+                setTheme(mode)
+                toast(`${mode === 'light' ? 'Light' : 'Dark'} mode enabled.`, 'success')
+              }}
+              className={`rounded-2xl border px-4 py-4 text-left transition ${
+                theme === mode
+                  ? 'border-brand bg-critical-bg/30 ring-2 ring-brand/20'
+                  : 'border-border bg-surface hover:border-brand/40'
+              }`}
+            >
+              <span className="block text-sm font-bold capitalize text-navy">{mode} mode</span>
+              <span className="mt-1 block text-xs text-muted">
+                {mode === 'light' ? 'Bright workspace' : 'Easier on the eyes at night'}
+              </span>
+            </button>
+          ))}
+        </div>
+      </Card>
 
       <Card className="space-y-4">
         <h2 className="text-lg font-bold text-navy">Account</h2>

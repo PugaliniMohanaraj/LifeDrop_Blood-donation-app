@@ -56,14 +56,10 @@ export function BloodBankDashboard() {
         subtitle="Update units and review critical groups before the next emergency."
       >
         <Link to="/blood-bank/stock">
-          <Button className="bg-white text-brand hover:bg-slate-100 shadow-none">
-            Manage Blood Stock
-          </Button>
+          <Button variant="hero">Manage Blood Stock</Button>
         </Link>
         <Link to="/blood-bank/donations">
-          <Button variant="outline" className="border-white text-white hover:bg-white/10">
-            View Donations
-          </Button>
+          <Button variant="heroOutline">View Donations</Button>
         </Link>
       </HeroPanel>
 

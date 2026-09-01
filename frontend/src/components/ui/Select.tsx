@@ -26,7 +26,7 @@ export function Select({
   const selectId = id || props.name || label.replace(/\s+/g, '-').toLowerCase()
   return (
     <div className="w-full">
-      <label htmlFor={selectId} className="mb-1.5 block text-sm font-medium text-navy">
+      <label htmlFor={selectId} className="mb-1.5 block text-sm font-medium text-foreground">
         {label}
         {props.required && (
           <span className="ml-0.5 text-brand" aria-hidden>
@@ -38,7 +38,7 @@ export function Select({
         id={selectId}
         aria-invalid={!!error}
         aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}
-        className={`w-full rounded-2xl border bg-white px-4 py-3 text-navy transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
+        className={`w-full rounded-2xl border bg-card px-4 py-3 text-foreground transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
           error ? 'border-critical' : 'border-border'
         } ${className}`}
         {...props}

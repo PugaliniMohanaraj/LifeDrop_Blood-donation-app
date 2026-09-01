@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { publicLinks } from '../../config/publicNav'
 import { useAuth } from '../../context/AuthContext'
 import { BrandMark } from '../BrandMark'
+import { ThemeToggle } from '../ThemeToggle'
 
 function dashboardForRole(role: string | undefined) {
   switch (role) {
@@ -37,7 +38,7 @@ export function PublicNavbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-white/90 shadow-[0_1px_0_rgba(11,28,51,0.04)] backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-card/90 shadow-[0_1px_0_rgba(11,28,51,0.04)] backdrop-blur-md dark:shadow-[0_1px_0_rgba(0,0,0,0.3)]">
       <div className="container-app flex h-[4.75rem] items-center justify-between gap-5 lg:h-[5.25rem]">
         <BrandMark />
 
@@ -51,7 +52,7 @@ export function PublicNavbar() {
                 className={`relative rounded-full px-3.5 py-2 text-[0.95rem] font-semibold tracking-tight transition ${
                   active
                     ? 'text-brand'
-                    : 'text-navy/75 hover:bg-critical-bg/40 hover:text-brand'
+                    : 'text-muted hover:bg-critical-bg/40 hover:text-brand'
                 }`}
               >
                 {l.label}
@@ -67,6 +68,7 @@ export function PublicNavbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
           {dashboardPath ? (
             <Link
               to={dashboardPath}
@@ -78,7 +80,7 @@ export function PublicNavbar() {
             <>
               <Link
                 to="/login"
-                className="inline-flex min-h-12 items-center rounded-full border-2 border-brand bg-white px-6 py-2.5 text-[0.95rem] font-bold text-brand transition hover:bg-critical-bg/50"
+                className="inline-flex min-h-12 items-center rounded-full border-2 border-brand bg-card px-6 py-2.5 text-[0.95rem] font-bold text-brand transition hover:bg-critical-bg/50"
               >
                 Log In
               </Link>
@@ -92,25 +94,28 @@ export function PublicNavbar() {
           )}
         </div>
 
-        <button
+        <div className="flex items-center gap-2 xl:hidden">
+          <ThemeToggle variant="ghost" />
+          <button
           type="button"
-          className="rounded-full p-2.5 text-navy hover:bg-surface xl:hidden"
+          className="rounded-full p-2.5 text-foreground hover:bg-surface xl:hidden"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
+        </div>
       </div>
 
       {open && (
-        <div className="border-t border-border bg-white px-5 py-5 xl:hidden">
+        <div className="border-t border-border bg-card px-5 py-5 xl:hidden">
           <nav className="flex flex-col gap-1" aria-label="Mobile">
             {publicLinks.map((l) => (
               <a
                 key={l.to}
                 href={l.to}
-                className="rounded-xl px-3 py-3 text-base font-semibold text-navy hover:bg-critical-bg/40 hover:text-brand"
+                className="rounded-xl px-3 py-3 text-base font-semibold text-foreground hover:bg-critical-bg/40 hover:text-brand"
                 onClick={() => setOpen(false)}
               >
                 {l.label}

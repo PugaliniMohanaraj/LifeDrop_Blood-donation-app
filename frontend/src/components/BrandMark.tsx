@@ -18,7 +18,7 @@ export function BrandMark({ compact = false, light = false }: BrandMarkProps) {
       <span className="min-w-0">
         <span
           className={`block font-extrabold leading-none tracking-tight ${
-            light ? 'text-white' : 'text-navy'
+            light ? 'text-white' : 'text-foreground'
           } ${compact ? 'text-xl' : 'text-[1.35rem] sm:text-[1.5rem]'}`}
         >
           Life<span className="text-brand">Drop</span>

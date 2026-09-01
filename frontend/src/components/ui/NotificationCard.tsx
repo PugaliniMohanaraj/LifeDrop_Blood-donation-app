@@ -31,7 +31,7 @@ export function NotificationCard({ item, onDismiss }: NotificationCardProps) {
           <button
             type="button"
             onClick={() => onDismiss(item.id)}
-            className="rounded-lg p-1 text-muted hover:bg-white/60 hover:text-navy"
+            className="rounded-lg p-1 text-muted hover:bg-card/60 hover:text-foreground"
             aria-label={`Dismiss ${item.title}`}
           >
             <X className="h-4 w-4" />

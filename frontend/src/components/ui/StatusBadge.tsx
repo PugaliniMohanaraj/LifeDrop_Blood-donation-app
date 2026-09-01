@@ -14,7 +14,7 @@ const tones: Record<Tone, string> = {
   warning: 'bg-warning-bg text-warning',
   critical: 'bg-critical-bg text-critical',
   info: 'bg-info-bg text-info',
-  neutral: 'bg-slate-100 text-slate-700',
+  neutral: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
   pending: 'bg-warning-bg text-warning',
 }
 

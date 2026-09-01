@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
@@ -8,17 +10,50 @@
   --color-brand-light: #FF3B45;
   --color-navy: #0B1C33;
   --color-navy-muted: #152A45;
-  --color-surface: #F7F8FA;
+  --color-sidebar: #0B1C33;
+
+  --color-surface: var(--theme-surface);
+  --color-card: var(--theme-card);
+  --color-foreground: var(--theme-foreground);
+  --color-border: var(--theme-border);
+  --color-muted: var(--theme-muted);
+
   --color-success: #15803D;
-  --color-success-bg: #DCFCE7;
+  --color-success-bg: var(--theme-success-bg);
   --color-warning: #B45309;
-  --color-warning-bg: #FEF3C7;
+  --color-warning-bg: var(--theme-warning-bg);
   --color-critical: #DC2626;
-  --color-critical-bg: #FEE2E2;
+  --color-critical-bg: var(--theme-critical-bg);
   --color-info: #1D4ED8;
-  --color-info-bg: #DBEAFE;
-  --color-border: #E2E8F0;
-  --color-muted: #64748B;
+  --color-info-bg: var(--theme-info-bg);
+}
+
+:root {
+  color-scheme: light;
+  --theme-surface: #F7F8FA;
+  --theme-card: #FFFFFF;
+  --theme-foreground: #0B1C33;
+  --theme-border: #E2E8F0;
+  --theme-muted: #64748B;
+  --theme-success-bg: #DCFCE7;
+  --theme-warning-bg: #FEF3C7;
+  --theme-critical-bg: #FEE2E2;
+  --theme-info-bg: #DBEAFE;
+}
+
+.dark {
+  color-scheme: dark;
+  --theme-surface: #0B1220;
+  --theme-card: #131C2E;
+  --theme-foreground: #E2E8F0;
+  --theme-border: #243044;
+  --theme-muted: #94A3B8;
+  --theme-success-bg: #052E16;
+  --theme-warning-bg: #422006;
+  --theme-critical-bg: #450A0A;
+  --theme-info-bg: #172554;
+  /* Use light text for all text-navy utilities (including text-navy/75) */
+  --color-navy: var(--theme-foreground);
 }
 
 @layer base {
@@ -27,18 +62,67 @@
   }
 
   body {
-    @apply bg-surface text-navy font-sans antialiased;
+    @apply bg-surface text-foreground font-sans antialiased;
     min-height: 100vh;
   }
 
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-brand;
   }
+
+  /* Keep navy backgrounds dark even when foreground token is light */
+  .dark .bg-navy,
+  .dark .bg-sidebar {
+    --color-navy: #0B1C33;
+    --color-sidebar: #0B1C33;
+  }
 }
 
 @layer utilities {
   .container-app {
     @apply mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-10 xl:px-12;
+  }
+
+  .bg-white {
+    background-color: var(--color-card);
+  }
+
+  .bg-white\/90 {
+    background-color: color-mix(in srgb, var(--color-card) 90%, transparent);
+  }
+
+  .bg-white\/15 {
+    background-color: color-mix(in srgb, var(--color-card) 15%, transparent);
+  }
+
+  /* Hero CTAs on red gradient — always white button + brand text */
+  .bg-white.text-brand {
+    background-color: #ffffff;
+    color: var(--color-brand);
+  }
+
+  .hover\:bg-slate-100:hover {
+    background-color: var(--theme-hover);
+  }
+
+  :root {
+    --theme-hover: #f1f5f9;
+  }
+
+  .dark {
+    --theme-hover: #1e293b;
+  }
+
+  .bg-slate-100 {
+    background-color: var(--theme-slate-muted);
+  }
+
+  :root {
+    --theme-slate-muted: #f1f5f9;
+  }
+
+  .dark {
+    --theme-slate-muted: #1e293b;
   }
 }
 

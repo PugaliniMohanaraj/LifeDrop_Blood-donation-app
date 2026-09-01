@@ -12,7 +12,7 @@ export function Tooltip({ text, label = 'More information' }: TooltipProps) {
     <span className="relative inline-flex">
       <button
         type="button"
-        className="rounded-full p-0.5 text-muted hover:text-navy"
+        className="rounded-full p-0.5 text-muted hover:text-foreground"
         aria-label={label}
         aria-expanded={open}
         onMouseEnter={() => setOpen(true)}

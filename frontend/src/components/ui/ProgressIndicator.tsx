@@ -23,14 +23,14 @@ export function ProgressIndicator({ steps, current }: ProgressIndicatorProps) {
                     ? 'bg-success text-white'
                     : active
                       ? 'bg-brand text-white'
-                      : 'bg-slate-200 text-slate-600'
+                      : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200'
                 }`}
                 aria-current={active ? 'step' : undefined}
               >
                 {done ? '✓' : index + 1}
               </span>
               <span
-                className={`text-sm font-medium ${active ? 'text-navy' : 'text-muted'}`}
+                className={`text-sm font-medium ${active ? 'text-foreground' : 'text-muted'}`}
               >
                 {step.label}
               </span>

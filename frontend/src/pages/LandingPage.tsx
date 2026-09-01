@@ -55,7 +55,7 @@ const reasons = [
     icon: Target,
     title: 'Clear Matching',
     text: 'Compare donors with transparent match scores — never a medical guess.',
-    tone: 'bg-violet-100 text-violet-700',
+    tone: 'bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
   },
   {
     icon: CheckCircle2,
@@ -67,7 +67,7 @@ const reasons = [
     icon: Users,
     title: 'For Everyone',
     text: 'Donors, recipients, hospitals, and blood banks — each with a focused experience.',
-    tone: 'bg-orange-100 text-orange-700',
+    tone: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300',
   },
 ]
 
@@ -108,7 +108,7 @@ export function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <PublicNavbar />
 
       {/* Hero */}

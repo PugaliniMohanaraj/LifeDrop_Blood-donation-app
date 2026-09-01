@@ -1,7 +1,6 @@
 import type { UserRole } from '../types'
 import {
   LayoutDashboard,
-  User,
   HeartPulse,
   Droplets,
   Bell,
@@ -27,7 +26,6 @@ export function getNavForRole(role: UserRole): NavItem[] {
     case 'DONOR':
       return [
         { label: 'Dashboard', to: '/donor', icon: LayoutDashboard },
-        { label: 'Profile', to: '/donor/profile', icon: User },
         { label: 'Availability', to: '/donor/availability', icon: HeartPulse },
         { label: 'Requests', to: '/donor/requests', icon: Droplets },
         { label: 'Notifications', to: '/donor/notifications', icon: Bell },

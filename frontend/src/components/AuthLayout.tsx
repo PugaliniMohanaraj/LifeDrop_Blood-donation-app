@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BrandMark } from './BrandMark'
+import { ThemeToggle } from './ThemeToggle'
 
 export function AuthLayout({
   title,
@@ -14,7 +15,10 @@ export function AuthLayout({
   footer?: ReactNode
 }) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
+    <div className="relative min-h-screen overflow-hidden bg-surface">
+      <div className="absolute right-5 top-5 z-10 sm:right-8">
+        <ThemeToggle />
+      </div>
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(227,6,19,0.08),_transparent_50%),radial-gradient(ellipse_at_bottom_left,_rgba(11,28,51,0.06),_transparent_45%)]"
         aria-hidden
@@ -41,7 +45,7 @@ export function AuthLayout({
           <div className="mb-6 lg:hidden">
             <BrandMark />
           </div>
-          <div className="rounded-3xl border border-border bg-white p-6 shadow-xl shadow-brand/5 sm:p-8">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-xl shadow-brand/5 sm:p-8">
             <h2 className="text-2xl font-extrabold text-navy">{title}</h2>
             <p className="mt-1 text-sm text-muted">{subtitle}</p>
             <div className="mt-6">{children}</div>

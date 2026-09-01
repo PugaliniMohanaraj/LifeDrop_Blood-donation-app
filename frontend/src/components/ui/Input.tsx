@@ -10,7 +10,7 @@ export function Input({ label, error, hint, id, className = '', ...props }: Inpu
   const inputId = id || props.name || label.replace(/\s+/g, '-').toLowerCase()
   return (
     <div className="w-full">
-      <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-navy">
+      <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-foreground">
         {label}
         {props.required && (
           <span className="ml-0.5 text-brand" aria-hidden>
@@ -22,7 +22,7 @@ export function Input({ label, error, hint, id, className = '', ...props }: Inpu
         id={inputId}
         aria-invalid={!!error}
         aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
-        className={`w-full rounded-2xl border bg-white px-4 py-3 text-navy placeholder:text-slate-400 transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
+        className={`w-full rounded-2xl border bg-card px-4 py-3 text-foreground placeholder:text-muted transition focus:border-brand focus:ring-2 focus:ring-brand/20 ${
           error ? 'border-critical' : 'border-border'
         } ${className}`}
         {...props}

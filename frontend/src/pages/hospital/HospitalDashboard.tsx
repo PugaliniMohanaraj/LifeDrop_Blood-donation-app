@@ -45,14 +45,10 @@ export function HospitalDashboard() {
         subtitle="Update stock levels or find suitable donors for urgent cases."
       >
         <Link to="/hospital/stock">
-          <Button className="bg-white text-brand hover:bg-slate-100 shadow-none">
-            Manage Blood Stock
-          </Button>
+          <Button variant="hero">Manage Blood Stock</Button>
         </Link>
         <Link to="/hospital/donors">
-          <Button variant="outline" className="border-white text-white hover:bg-white/10">
-            Find Donors
-          </Button>
+          <Button variant="heroOutline">Find Donors</Button>
         </Link>
       </HeroPanel>
 
