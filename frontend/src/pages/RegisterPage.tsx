@@ -6,8 +6,11 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { BLOOD_GROUPS, type BloodGroup } from '../types'
 import {
-  isValidEmail,
+  getPasswordValidationError,
+  isGmailEmail,
   isValidPhone,
+  PASSWORD_HINT,
+  passwordsMatch,
   validateDonorForm,
   validateRecipientForm,
 } from '../utils/validation'
@@ -26,6 +29,7 @@ export function RegisterPage() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [bloodGroup, setBloodGroup] = useState('')
   const [location, setLocation] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -34,11 +38,13 @@ export function RegisterPage() {
 
   const bloodOptions = useMemo(() => BLOOD_GROUPS.map((g) => ({ value: g, label: g })), [])
 
-  const validateField = (name: string, value: string) => {
+  const validateField = (name: string, value: string, extra?: { password?: string }) => {
     setErrors((prev) => {
       const next = { ...prev }
       if (name === 'email') {
-        if (value && !isValidEmail(value)) next.email = 'Please enter a valid email address.'
+        if (!value.trim()) delete next.email
+        else if (!isGmailEmail(value))
+          next.email = 'Please use a Gmail address ending with @gmail.com.'
         else delete next.email
       }
       if (name === 'phone') {
@@ -46,8 +52,18 @@ export function RegisterPage() {
         else delete next.phone
       }
       if (name === 'password') {
-        if (value && value.length < 8) next.password = 'Password must be at least 8 characters.'
+        const err = value ? getPasswordValidationError(value) : null
+        if (err) next.password = err
         else delete next.password
+        if (confirmPassword && !passwordsMatch(value, confirmPassword))
+          next.confirmPassword = 'Passwords do not match.'
+        else if (confirmPassword) delete next.confirmPassword
+      }
+      if (name === 'confirmPassword') {
+        const pwd = extra?.password ?? password
+        if (value && !passwordsMatch(pwd, value))
+          next.confirmPassword = 'Passwords do not match.'
+        else delete next.confirmPassword
       }
       return next
     })
@@ -56,11 +72,11 @@ export function RegisterPage() {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
     setFormError('')
-    const payload = { fullName, email, phone, password, bloodGroup, location }
+    const payload = { fullName, email, phone, password, confirmPassword, bloodGroup, location }
     const v =
       role === 'donor'
         ? validateDonorForm(payload)
-        : validateRecipientForm({ fullName, email, phone, password, location })
+        : validateRecipientForm({ fullName, email, phone, password, confirmPassword, location })
     setErrors(v)
     if (Object.keys(v).length) return
 
@@ -178,6 +194,7 @@ export function RegisterPage() {
             validateField('email', e.target.value)
           }}
           error={errors.email}
+          hint="Gmail only — e.g. you@gmail.com"
           autoComplete="email"
         />
         <Input
@@ -204,7 +221,20 @@ export function RegisterPage() {
             validateField('password', e.target.value)
           }}
           error={errors.password}
-          hint="At least 8 characters"
+          hint={PASSWORD_HINT}
+          autoComplete="new-password"
+        />
+        <Input
+          label="Confirm Password"
+          type="password"
+          name="confirmPassword"
+          required
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value)
+            validateField('confirmPassword', e.target.value, { password })
+          }}
+          error={errors.confirmPassword}
           autoComplete="new-password"
         />
         {role === 'donor' && (

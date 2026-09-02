@@ -30,11 +30,8 @@ export function PublicNavbar() {
   const dashboardPath = dashboardForRole(user?.role)
 
   const isActive = (to: string) => {
-    if (to === '/') return location.pathname === '/' && !location.hash
-    if (to.startsWith('/#')) {
-      return location.hash === to.slice(1) || (location.pathname === '/' && location.hash === to.slice(1))
-    }
-    return location.pathname === to
+    if (to === '/') return location.pathname === '/'
+    return location.pathname === to || location.pathname.startsWith(`${to}/`)
   }
 
   return (
@@ -44,11 +41,11 @@ export function PublicNavbar() {
 
         <nav className="hidden items-center gap-1 xl:flex" aria-label="Main">
           {publicLinks.map((l) => {
-            const active = l.to === '/' ? location.pathname === '/' && !location.hash : isActive(l.to)
+            const active = isActive(l.to)
             return (
-              <a
+              <Link
                 key={l.to}
-                href={l.to}
+                to={l.to}
                 className={`relative rounded-full px-3.5 py-2 text-[0.95rem] font-semibold tracking-tight transition ${
                   active
                     ? 'text-brand'
@@ -62,7 +59,7 @@ export function PublicNavbar() {
                     aria-hidden
                   />
                 )}
-              </a>
+              </Link>
             )
           })}
         </nav>
@@ -112,14 +109,14 @@ export function PublicNavbar() {
         <div className="border-t border-border bg-card px-5 py-5 xl:hidden">
           <nav className="flex flex-col gap-1" aria-label="Mobile">
             {publicLinks.map((l) => (
-              <a
+              <Link
                 key={l.to}
-                href={l.to}
+                to={l.to}
                 className="rounded-xl px-3 py-3 text-base font-semibold text-foreground hover:bg-critical-bg/40 hover:text-brand"
                 onClick={() => setOpen(false)}
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
             <div className="mt-3 flex flex-col gap-2 border-t border-border pt-4">
               {dashboardPath ? (

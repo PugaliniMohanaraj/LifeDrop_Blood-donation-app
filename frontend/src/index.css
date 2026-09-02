@@ -137,6 +137,17 @@
   }
 }
 
+@keyframes card-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes soft-float {
   0%,
   100% {
@@ -157,4 +168,112 @@
 
 .animate-float {
   animation: soft-float 4s ease-in-out infinite;
+}
+
+.card-reveal {
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+  transition-delay: var(--card-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.card-reveal-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.card-interactive {
+  position: relative;
+  overflow: hidden;
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.card-interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    transparent 30%,
+    color-mix(in srgb, var(--color-brand) 6%, transparent) 50%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card-interactive::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, white 35%, transparent),
+    transparent
+  );
+  transform: skewX(-18deg);
+  transition: left 0.65s ease;
+  pointer-events: none;
+}
+
+.card-reveal-visible.card-interactive:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow:
+    0 20px 40px -16px color-mix(in srgb, var(--color-brand) 22%, transparent),
+    0 8px 24px -8px color-mix(in srgb, var(--color-navy) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand) 30%, var(--theme-border));
+}
+
+.card-reveal-visible.card-interactive:hover::before {
+  opacity: 1;
+}
+
+.card-reveal-visible.card-interactive:hover::after {
+  left: 140%;
+}
+
+.card-interactive:hover .card-icon {
+  transform: scale(1.12) rotate(-3deg);
+  background-color: color-mix(in srgb, var(--color-brand) 12%, var(--theme-critical-bg));
+}
+
+.card-icon {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-reveal {
+    opacity: 1;
+    transform: none;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card-reveal-visible.card-interactive:hover {
+    transform: none;
+  }
+
+  .card-interactive::after,
+  .card-interactive::before {
+    display: none;
+  }
+
+  .card-interactive:hover .card-icon {
+    transform: none;
+  }
 }

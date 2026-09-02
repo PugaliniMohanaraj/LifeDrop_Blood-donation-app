@@ -5,7 +5,14 @@ import { ToastProvider } from './context/ToastContext'
 import { AppDataProvider } from './context/AppDataContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { AppShell } from './components/layout/AppShell'
-import { LandingPage } from './pages/LandingPage'
+import { HomePage } from './pages/public/HomePage'
+import { AboutPage } from './pages/public/AboutPage'
+import { HowItWorksPage } from './pages/public/HowItWorksPage'
+import { BlogsPage } from './pages/public/BlogsPage'
+import { GuidePage } from './pages/public/GuidePage'
+import { FaqsPage } from './pages/public/FaqsPage'
+import { StoriesPage } from './pages/public/StoriesPage'
+import { ContactPage } from './pages/public/ContactPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { OrganizationRegisterPage } from './pages/OrganizationRegisterPage'
@@ -41,7 +48,14 @@ import { AdminSettingsPage } from './pages/admin/AdminSettingsPage'
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
+      <Route path="/blogs" element={<BlogsPage />} />
+      <Route path="/guide" element={<GuidePage />} />
+      <Route path="/faqs" element={<FaqsPage />} />
+      <Route path="/stories" element={<StoriesPage />} />
+      <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/organization/register" element={<OrganizationRegisterPage />} />

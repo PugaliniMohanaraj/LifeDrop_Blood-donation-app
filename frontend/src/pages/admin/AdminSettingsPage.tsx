@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import { useToast } from '../../context/ToastContext'
 import { Button, Card, Input } from '../../components/ui'
-import { isStrongPassword } from '../../utils/validation'
+import { getPasswordValidationError } from '../../utils/validation'
 
 const PREFS_KEY = 'lifedrop_admin_prefs'
 
@@ -70,8 +70,10 @@ export function AdminSettingsPage() {
     const errors: Record<string, string> = {}
     if (!currentPassword) errors.currentPassword = 'Please enter your current password.'
     if (!newPassword) errors.newPassword = 'Please enter a new password.'
-    else if (!isStrongPassword(newPassword))
-      errors.newPassword = 'Password must be at least 8 characters.'
+    else {
+      const passwordError = getPasswordValidationError(newPassword)
+      if (passwordError) errors.newPassword = passwordError
+    }
     if (newPassword !== confirmPassword) errors.confirmPassword = 'Passwords do not match.'
     setPwErrors(errors)
     if (Object.keys(errors).length) return

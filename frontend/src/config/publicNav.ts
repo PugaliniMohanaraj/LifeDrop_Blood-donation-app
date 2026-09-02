@@ -1,8 +1,14 @@
 export const publicLinks = [
   { label: 'Home', to: '/' },
-  { label: 'How It Works', to: '/#how-it-works' },
-  { label: 'About Us', to: '/#about' },
-  { label: 'For Organizations', to: '/#organizations' },
-  { label: 'FAQs', to: '/#faqs' },
-  { label: 'Contact', to: '/#contact' },
+  { label: 'About Us', to: '/about' },
+  { label: 'Stories', to: '/stories' },
+  { label: 'Blogs', to: '/blogs' },
+  { label: 'Guide', to: '/guide' },
+  { label: 'FAQs', to: '/faqs' },
+  { label: 'Contact Us', to: '/contact' },
+]
+
+export const footerExtraLinks = [
+  { label: 'How It Works', to: '/how-it-works' },
+  { label: 'For Organizations', to: '/organization/register' },
 ]
