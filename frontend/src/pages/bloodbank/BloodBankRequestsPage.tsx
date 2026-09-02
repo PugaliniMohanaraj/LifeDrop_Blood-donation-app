@@ -1,26 +1,36 @@
+import { ClipboardList } from 'lucide-react'
 import { useAppData } from '../../context/AppDataContext'
-import { Card, StatusBadge, requestStatusMeta } from '../../components/ui'
+import { StatusBadge, requestStatusMeta } from '../../components/ui'
+import { IconPageHeader, ListCard, PageContainer } from '../../components/PageChrome'
 
 export function BloodBankRequestsPage() {
   const { requests } = useAppData()
+
   return (
-    <div className="mx-auto w-full max-w-none space-y-4">
-      <h1 className="text-2xl font-extrabold text-navy">Requests</h1>
-      <p className="text-sm text-muted">Blood requests that may need bank support.</p>
-      {requests.map((r) => {
-        const meta = requestStatusMeta(r.status)
-        return (
-          <Card key={r.id}>
-            <p className="font-bold text-navy">
-              {r.bloodGroup} · {r.units} units
-            </p>
-            <p className="text-sm text-muted">{r.hospital}</p>
-            <div className="mt-2">
-              <StatusBadge label={meta.label} tone={meta.tone} icon={<span>{meta.icon}</span>} />
-            </div>
-          </Card>
-        )
-      })}
-    </div>
+    <PageContainer>
+      <IconPageHeader
+        icon={ClipboardList}
+        title="Requests"
+        subtitle="Blood requests that may need bank support."
+      />
+
+      <div className="space-y-4">
+        {requests.map((r) => {
+          const meta = requestStatusMeta(r.status)
+          return (
+            <ListCard key={r.id} className="p-5">
+              <p className="text-lg font-bold text-foreground">
+                {r.bloodGroup} · {r.units} units
+              </p>
+              <p className="text-sm text-muted">{r.hospital}</p>
+              <p className="text-sm text-muted">{r.recipientName}</p>
+              <div className="mt-2">
+                <StatusBadge label={meta.label} tone={meta.tone} icon={<span>{meta.icon}</span>} />
+              </div>
+            </ListCard>
+          )
+        })}
+      </div>
+    </PageContainer>
   )
 }

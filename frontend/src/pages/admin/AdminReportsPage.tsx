@@ -1,19 +1,29 @@
-import { Card } from '../../components/ui'
+import { BarChart3, Heart, Users } from 'lucide-react'
+import { IconPageHeader, MetricCard, PageContainer } from '../../components/PageChrome'
 
 export function AdminReportsPage() {
   return (
-    <div className="mx-auto w-full max-w-none space-y-4">
-      <h1 className="text-2xl font-extrabold text-navy">Reports</h1>
+    <PageContainer>
+      <IconPageHeader
+        icon={BarChart3}
+        title="Reports"
+        subtitle="Platform-wide activity summary for planning and oversight."
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
-          <p className="text-xs uppercase text-muted">Active donors</p>
-          <p className="mt-2 text-3xl font-extrabold">128</p>
-        </Card>
-        <Card>
-          <p className="text-xs uppercase text-muted">Requests this month</p>
-          <p className="mt-2 text-3xl font-extrabold">64</p>
-        </Card>
+        <MetricCard
+          label="Active donors"
+          value={128}
+          icon={<Users className="h-5 w-5 text-brand" />}
+          iconClass="bg-critical-bg"
+        />
+        <MetricCard
+          label="Requests this month"
+          value={64}
+          icon={<Heart className="h-5 w-5 text-success" />}
+          iconClass="bg-success-bg"
+        />
       </div>
-    </div>
+    </PageContainer>
   )
 }

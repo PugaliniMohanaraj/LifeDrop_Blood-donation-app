@@ -30,6 +30,10 @@ public class Organization {
     @Column(nullable = false)
     private String address;
 
+    private String province;
+
+    private String district;
+
     @Column(nullable = false)
     private String staffId;
 
@@ -58,6 +62,12 @@ public class Organization {
     public void setPhone(String phone) { this.phone = phone; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+
     public String getStaffId() { return staffId; }
     public void setStaffId(String staffId) { this.staffId = staffId; }
     public String getDocumentName() { return documentName; }

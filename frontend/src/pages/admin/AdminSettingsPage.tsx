@@ -1,3 +1,4 @@
+import { Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiErrorMessage, changePassword } from '../../api/bloodBridge'
@@ -5,6 +6,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import { useToast } from '../../context/ToastContext'
 import { Button, Card, Input } from '../../components/ui'
+import { IconPageHeader, ListCard, PageContainer } from '../../components/PageChrome'
 import { getPasswordValidationError } from '../../utils/validation'
 
 const PREFS_KEY = 'lifedrop_admin_prefs'
@@ -94,15 +96,16 @@ export function AdminSettingsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-navy">Settings</h1>
-        <p className="text-sm text-muted">Manage your admin account and alert preferences.</p>
-      </div>
+    <PageContainer className="max-w-2xl">
+      <IconPageHeader
+        icon={Settings}
+        title="Settings"
+        subtitle="Manage your admin account and alert preferences."
+      />
 
-      <Card className="space-y-4">
+      <ListCard className="space-y-4 p-5 sm:p-6">
         <div>
-          <h2 className="text-lg font-bold text-navy">Appearance</h2>
+          <h2 className="text-lg font-bold text-foreground">Appearance</h2>
           <p className="text-sm text-muted">Choose light or dark mode for the whole app.</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -120,17 +123,17 @@ export function AdminSettingsPage() {
                   : 'border-border bg-surface hover:border-brand/40'
               }`}
             >
-              <span className="block text-sm font-bold capitalize text-navy">{mode} mode</span>
+              <span className="block text-sm font-bold capitalize text-foreground">{mode} mode</span>
               <span className="mt-1 block text-xs text-muted">
                 {mode === 'light' ? 'Bright workspace' : 'Easier on the eyes at night'}
               </span>
             </button>
           ))}
         </div>
-      </Card>
+      </ListCard>
 
-      <Card className="space-y-4">
-        <h2 className="text-lg font-bold text-navy">Account</h2>
+      <ListCard className="space-y-4 p-5 sm:p-6">
+        <h2 className="text-lg font-bold text-foreground">Account</h2>
         <Input
           label="Full name"
           value={fullName}
@@ -151,13 +154,13 @@ export function AdminSettingsPage() {
         />
         <div className="rounded-2xl border border-border bg-surface px-4 py-3 text-sm">
           <p className="text-muted">Role</p>
-          <p className="font-semibold text-navy">Platform Administrator</p>
+          <p className="font-semibold text-foreground">Platform Administrator</p>
         </div>
         <Button onClick={saveProfile}>Save profile</Button>
-      </Card>
+      </ListCard>
 
-      <Card className="space-y-4">
-        <h2 className="text-lg font-bold text-navy">Change password</h2>
+      <ListCard className="space-y-4 p-5 sm:p-6">
+        <h2 className="text-lg font-bold text-foreground">Change password</h2>
         <Input
           label="Current password"
           type="password"
@@ -186,11 +189,11 @@ export function AdminSettingsPage() {
         <Button loading={savingPw} onClick={() => void submitPassword()}>
           Update password
         </Button>
-      </Card>
+      </ListCard>
 
-      <Card className="space-y-4">
+      <ListCard className="space-y-4 p-5 sm:p-6">
         <div>
-          <h2 className="text-lg font-bold text-navy">Notifications</h2>
+          <h2 className="text-lg font-bold text-foreground">Notifications</h2>
           <p className="text-sm text-muted">Choose which admin alerts you want to see.</p>
         </div>
         {(
@@ -223,15 +226,15 @@ export function AdminSettingsPage() {
               onChange={(e) => savePrefs({ ...prefs, [item.key]: e.target.checked })}
             />
             <span>
-              <span className="block font-medium text-navy">{item.label}</span>
+              <span className="block font-medium text-foreground">{item.label}</span>
               <span className="block text-sm text-muted">{item.hint}</span>
             </span>
           </label>
         ))}
-      </Card>
+      </ListCard>
 
-      <Card className="space-y-3">
-        <h2 className="text-lg font-bold text-navy">Session</h2>
+      <ListCard className="space-y-3 p-5 sm:p-6">
+        <h2 className="text-lg font-bold text-foreground">Session</h2>
         <p className="text-sm text-muted">Sign out of this admin account on this device.</p>
         <Button
           variant="outline"
@@ -243,7 +246,7 @@ export function AdminSettingsPage() {
         >
           Sign out
         </Button>
-      </Card>
-    </div>
+      </ListCard>
+    </PageContainer>
   )
 }

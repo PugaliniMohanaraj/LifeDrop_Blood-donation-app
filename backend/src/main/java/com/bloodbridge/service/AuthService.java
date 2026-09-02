@@ -60,6 +60,12 @@ public class AuthService {
         return new AuthResponse(token, UserResponse.from(user));
     }
 
+    public MessageResponse requestPasswordReset(ForgotPasswordRequest req) {
+        // Generic response — never reveal whether the email is registered
+        return new MessageResponse(
+                "If an account exists for this email, password reset instructions have been sent.");
+    }
+
     @Transactional
     public AuthResponse registerDonor(DonorRegisterRequest req) {
         ensureUniqueEmail(req.email());

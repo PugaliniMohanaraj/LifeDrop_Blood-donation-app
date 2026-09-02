@@ -15,6 +15,7 @@ import {
 import { PublicLayout } from '../../components/layout/PublicLayout'
 import { AnimatedCard } from '../../components/public/AnimatedCard'
 import { HomeStakeholderSection } from '../../components/public/HomeStakeholderSection'
+import { HomeBloodInventorySection } from '../../components/public/HomeBloodInventorySection'
 import { HomeStoryCarousel } from '../../components/public/HomeStoryCarousel'
 import { ShareStoryModal } from '../../components/public/ShareStoryModal'
 import { fetchPlatformStats } from '../../api/bloodBridge'
@@ -61,7 +62,7 @@ export function HomePage() {
               <span className="text-brand">the want of blood.</span>
             </h1>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted sm:text-lg">
-              Sri Lanka&apos;s smart blood donation network — connecting donors, recipients, and
+              Sri Lanka&apos;s smart blood donation network - connecting donors, recipients, and
               verified healthcare partners across the island.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -123,6 +124,9 @@ export function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* Real-time blood inventory preview */}
+      <HomeBloodInventorySection />
 
       {/* Stakeholder features — mockup style */}
       <HomeStakeholderSection />
@@ -400,6 +404,8 @@ export function HomePage() {
           <div className="space-y-2">
             {previewFaqs.map((f, i) => {
               const isOpen = openFaq === i
+              const panelId = `home-faq-panel-${i}`
+              const buttonId = `home-faq-button-${i}`
               return (
                 <AnimatedCard
                   key={f.q}
@@ -411,6 +417,9 @@ export function HomePage() {
                 >
                   <button
                     type="button"
+                    id={buttonId}
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
                     onClick={() => setOpenFaq(isOpen ? -1 : i)}
                     className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left sm:px-6"
                   >
@@ -424,6 +433,9 @@ export function HomePage() {
                     </span>
                   </button>
                   <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={buttonId}
                     className={`grid transition-all duration-300 ease-out ${
                       isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
                     }`}

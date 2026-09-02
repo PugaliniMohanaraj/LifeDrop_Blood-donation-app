@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Droplet, Info } from 'lucide-react'
 import { fetchStock, updateStock } from '../../api/bloodBridge'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
@@ -13,6 +14,7 @@ import {
   stockLabel,
   stockTone,
 } from '../../components/ui'
+import { GradientBanner, IconPageHeader, ListCard, PageContainer } from '../../components/PageChrome'
 import type { BloodStockItem } from '../../types'
 
 export function HospitalStockPage() {
@@ -36,40 +38,63 @@ export function HospitalStockPage() {
       .finally(() => setLoading(false))
   }, [orgId])
 
-  if (loading) return <LoadingSpinner label="Loading blood stock…" />
+  if (loading) {
+    return (
+      <PageContainer>
+        <LoadingSpinner label="Loading blood stock…" />
+      </PageContainer>
+    )
+  }
 
   if (!orgId) {
     return (
-      <EmptyState
-        title="Organization not linked"
-        description="Your account is not linked to a hospital or blood bank yet."
-      />
+      <PageContainer>
+        <EmptyState
+          title="Organization not linked"
+          description="Your account is not linked to a hospital or blood bank yet."
+        />
+      </PageContainer>
     )
   }
 
   if (!stock.length) {
     return (
-      <EmptyState
-        title="No stock records yet"
-        description="Stock appears after organization verification or when units are added."
-      />
+      <PageContainer>
+        <IconPageHeader
+          icon={Droplet}
+          title="Blood Inventory"
+          subtitle="Update units for each blood group at your facility."
+        />
+        <EmptyState
+          title="No stock records yet"
+          description="Stock appears after organization verification or when units are added."
+        />
+      </PageContainer>
     )
   }
 
   return (
-    <div className="mx-auto w-full max-w-none space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-navy">Blood Stock</h1>
+    <PageContainer>
+      <IconPageHeader
+        icon={Droplet}
+        title="Blood Inventory"
+        subtitle="Status uses color, icon, and text so levels stay clear for everyone."
+      />
+
+      <Card className="flex items-start gap-3 border-info/20 bg-info-bg/40 p-4">
+        <Info className="mt-0.5 h-5 w-5 shrink-0 text-info" aria-hidden />
         <p className="text-sm text-muted">
-          Status uses color, icon, and text so levels stay clear for everyone.
+          Update inventory after each collection or issue. Public availability reflects verified
+          organization data — contact the blood bank before travelling.
         </p>
-      </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      </Card>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {stock.map((s) => (
-          <Card key={s.bloodGroup}>
+          <ListCard key={s.bloodGroup} className="p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xl font-extrabold text-navy">{s.bloodGroup}</p>
+                <p className="text-xl font-extrabold text-foreground">{s.bloodGroup}</p>
                 <p className="text-sm text-muted">{s.units} units</p>
                 <div className="mt-2">
                   <StatusBadge
@@ -101,7 +126,7 @@ export function HospitalStockPage() {
                               ),
                             )
                             setEditing(null)
-                            toast('Blood stock updated.', 'success')
+                            toast('Blood inventory updated successfully.', 'success')
                           })
                           .catch(() => toast('Could not update stock. Please try again.', 'error'))
                       }}
@@ -126,9 +151,16 @@ export function HospitalStockPage() {
                 </Button>
               )}
             </div>
-          </Card>
+          </ListCard>
         ))}
       </div>
-    </div>
+
+      <GradientBanner
+        variant="success"
+        title="Inventory updated?"
+        description="Your changes help patients find blood faster across LifeDrop."
+        icon={<Droplet className="h-5 w-5 text-success" fill="currentColor" />}
+      />
+    </PageContainer>
   )
 }

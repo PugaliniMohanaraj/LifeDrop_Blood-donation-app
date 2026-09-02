@@ -1,6 +1,24 @@
-import { Navigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import type { UserRole } from '../../types'
+import { Button } from '../ui'
+
+function dashboardPath(role: UserRole): string {
+  switch (role) {
+    case 'DONOR':
+      return '/donor'
+    case 'RECIPIENT':
+      return '/recipient'
+    case 'HOSPITAL':
+      return '/hospital'
+    case 'BLOOD_BANK':
+      return '/blood-bank'
+    case 'ADMIN':
+      return '/admin'
+    default:
+      return '/'
+  }
+}
 
 export function RequireAuth({
   children,
@@ -27,6 +45,9 @@ export function RequireAuth({
           <p className="mt-1 text-sm text-muted">
             Switch to an account with the correct role, or go back to your dashboard.
           </p>
+          <Link to={dashboardPath(user.role)} className="mt-6 inline-block">
+            <Button>Go to my dashboard</Button>
+          </Link>
         </div>
       </div>
     )

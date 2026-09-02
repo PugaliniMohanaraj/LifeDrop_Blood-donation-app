@@ -14,6 +14,12 @@ public final class Dtos {
             String password
     ) {}
 
+    public record ForgotPasswordRequest(
+            @NotBlank(message = "Please enter your email address.")
+            @Email(message = "Please enter a valid email address.")
+            String email
+    ) {}
+
     public record DonorRegisterRequest(
             @NotBlank(message = "Please enter your full name.") String fullName,
             @NotBlank(message = "Please enter your email address.")
@@ -78,7 +84,46 @@ public final class Dtos {
 
     public record StockUpdate(
             @NotBlank(message = "Please select a blood group.") String bloodGroup,
-            @Min(value = 0, message = "Units cannot be negative.") int units
+            @Min(value = 0, message = "Units cannot be negative.") int units,
+            String component
+    ) {}
+
+    public record BloodAvailabilityItem(
+            Long organizationId,
+            String organizationName,
+            String organizationType,
+            String province,
+            String district,
+            String address,
+            String phone,
+            String bloodGroup,
+            String component,
+            int availableUnits,
+            String status,
+            boolean verified,
+            String sourceType,
+            String sourceName,
+            String lastUpdated
+    ) {}
+
+    public record BloodAvailabilityDetail(
+            Long organizationId,
+            String organizationName,
+            String organizationType,
+            String province,
+            String district,
+            String address,
+            String phone,
+            String email,
+            boolean verified,
+            String sourceType,
+            String sourceName,
+            String bloodGroup,
+            String component,
+            int availableUnits,
+            String status,
+            String lastUpdated,
+            java.util.List<BloodAvailabilityItem> inventory
     ) {}
 
     public record InviteRequest(

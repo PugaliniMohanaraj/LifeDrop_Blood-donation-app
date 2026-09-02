@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/auth/**", "/api/health", "/api/stats", "/h2-console/**").permitAll()
+                        .requestMatchers("/", "/api/auth/**", "/api/health", "/api/stats", "/api/public/**", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/organizations").permitAll()
                         .anyRequest().authenticated())
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()))

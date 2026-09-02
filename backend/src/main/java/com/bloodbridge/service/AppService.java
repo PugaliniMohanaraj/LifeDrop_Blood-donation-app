@@ -1,5 +1,6 @@
 package com.bloodbridge.service;
 
+import com.bloodbridge.config.StockThresholds;
 import com.bloodbridge.domain.*;
 import com.bloodbridge.dto.Dtos.*;
 import com.bloodbridge.repository.AppNotificationRepository;
@@ -304,15 +305,26 @@ public class AppService {
 
     @Transactional
     public BloodStock updateStock(Long organizationId, BloodGroup group, int units) {
-        BloodStock item = stock.findByOrganizationIdAndBloodGroup(organizationId, group)
+        return updateStock(organizationId, group, BloodComponent.WHOLE_BLOOD, units);
+    }
+
+    @Transactional
+    public BloodStock updateStock(
+            Long organizationId, BloodGroup group, BloodComponent component, int units) {
+        BloodStock item = stock.findByOrganizationIdAndBloodGroupAndComponent(
+                        organizationId, group, component)
+                .or(() -> stock.findByOrganizationIdAndBloodGroup(organizationId, group))
                 .orElseGet(() -> {
                     BloodStock s = new BloodStock();
                     s.setOrganizationId(organizationId);
                     s.setBloodGroup(group);
+                    s.setComponent(component);
                     return s;
                 });
+        item.setComponent(component);
         item.setUnits(units);
         item.setLevel(levelFor(units));
+        item.setLastUpdated(Instant.now());
         return stock.save(item);
     }
 
@@ -416,16 +428,18 @@ public class AppService {
             BloodStock s = new BloodStock();
             s.setOrganizationId(orgId);
             s.setBloodGroup((BloodGroup) row[0]);
+            s.setComponent(BloodComponent.WHOLE_BLOOD);
             int units = (Integer) row[1];
             s.setUnits(units);
             s.setLevel(levelFor(units));
+            s.setLastUpdated(Instant.now());
             stock.save(s);
         }
     }
 
     public static StockLevel levelFor(int units) {
-        if (units <= 2) return StockLevel.CRITICAL;
-        if (units <= 6) return StockLevel.LOW;
+        if (units <= 0) return StockLevel.CRITICAL;
+        if (units <= StockThresholds.LOW_STOCK_MAX_UNITS) return StockLevel.LOW;
         return StockLevel.AVAILABLE;
     }
 }

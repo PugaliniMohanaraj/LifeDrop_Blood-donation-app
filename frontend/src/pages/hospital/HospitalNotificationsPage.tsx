@@ -1,28 +1,44 @@
-import { EmptyState, LoadingSpinner, NotificationCard } from '../../components/ui'
-import { useNotifications } from '../../hooks/useNotifications'
+import { BellRing, Building2, ClipboardList, Droplet } from 'lucide-react'
+import { RoleNotificationsPage } from '../../components/layout/RoleNotificationsPage'
+
+const notifyAbout = [
+  {
+    icon: ClipboardList,
+    title: 'New blood requests',
+    text: 'When patient or emergency requests need hospital coordination.',
+    tone: 'bg-critical-bg text-brand',
+  },
+  {
+    icon: Droplet,
+    title: 'Stock alerts',
+    text: 'When blood groups at your facility reach low or critical levels.',
+    tone: 'bg-warning-bg text-warning',
+  },
+  {
+    icon: Building2,
+    title: 'Organization updates',
+    text: 'Verification, account, and platform messages for your hospital.',
+    tone: 'bg-info-bg text-info',
+  },
+  {
+    icon: BellRing,
+    title: 'Emergency notices',
+    text: 'Time-sensitive alerts for urgent patient needs.',
+    tone: 'bg-success-bg text-success',
+  },
+]
 
 export function HospitalNotificationsPage() {
-  const { items, loading, dismiss } = useNotifications()
-
-  if (loading) return <LoadingSpinner label="Loading notifications…" />
-
-  if (!items.length) {
-    return (
-      <EmptyState
-        title="No notifications"
-        description="Organization updates will appear here."
-      />
-    )
-  }
-
   return (
-    <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-2xl font-extrabold text-navy">Notifications</h1>
-      <div className="space-y-3">
-        {items.map((item) => (
-          <NotificationCard key={item.id} item={item} onDismiss={(id) => void dismiss(id)} />
-        ))}
-      </div>
-    </div>
+    <RoleNotificationsPage
+      icon={BellRing}
+      subtitle="Organization updates, requests, and stock alerts for your hospital."
+      emptyTitle="No notifications yet"
+      emptyDescription="Updates about requests, stock, and organization activity will appear here."
+      emptyActionLabel="View requests"
+      emptyActionTo="/hospital/requests"
+      emptyActionIcon={ClipboardList}
+      notifyAbout={notifyAbout}
+    />
   )
 }

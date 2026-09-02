@@ -1,5 +1,6 @@
 package com.bloodbridge.web;
 
+import com.bloodbridge.domain.BloodComponent;
 import com.bloodbridge.domain.BloodGroup;
 import com.bloodbridge.domain.DonationInvite;
 import com.bloodbridge.domain.Organization;
@@ -180,6 +181,11 @@ public class ApiController {
             throw new IllegalArgumentException("You can only update stock for your own organization.");
         }
         return appService.updateStock(
-                organizationId, BloodGroup.fromLabel(req.bloodGroup()), req.units());
+                organizationId,
+                BloodGroup.fromLabel(req.bloodGroup()),
+                req.component() == null || req.component().isBlank()
+                        ? BloodComponent.WHOLE_BLOOD
+                        : BloodComponent.fromLabel(req.component()),
+                req.units());
     }
 }

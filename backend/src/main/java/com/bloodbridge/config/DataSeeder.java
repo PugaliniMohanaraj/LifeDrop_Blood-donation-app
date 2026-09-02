@@ -46,7 +46,9 @@ public class DataSeeder {
             hospital.setRegistrationNumber("HSP-001");
             hospital.setEmail("hospital@bloodbridge.com");
             hospital.setPhone("+94773456789");
-            hospital.setAddress("Jaffna");
+            hospital.setAddress("Hospital Road, Jaffna");
+            hospital.setProvince("Northern");
+            hospital.setDistrict("Jaffna");
             hospital.setStaffId("STF-100");
             hospital.setDocumentName("license.pdf");
             hospital.setStatus(VerificationStatus.APPROVED);
@@ -65,7 +67,9 @@ public class DataSeeder {
             bank.setRegistrationNumber("BB-001");
             bank.setEmail("bloodbank@bloodbridge.com");
             bank.setPhone("+94774567890");
-            bank.setAddress("Colombo");
+            bank.setAddress("555/5D Elvitigala Mawatha, Narahenpita, Colombo 05");
+            bank.setProvince("Western");
+            bank.setDistrict("Colombo");
             bank.setStaffId("STF-200");
             bank.setDocumentName("license.pdf");
             bank.setStatus(VerificationStatus.APPROVED);
@@ -134,9 +138,11 @@ public class DataSeeder {
             BloodStock s = new BloodStock();
             s.setOrganizationId(orgId);
             s.setBloodGroup((BloodGroup) row[0]);
+            s.setComponent(BloodComponent.WHOLE_BLOOD);
             int units = (Integer) row[1];
             s.setUnits(units);
             s.setLevel(AppService.levelFor(units));
+            s.setLastUpdated(java.time.Instant.now());
             stock.save(s);
         }
     }

@@ -1,5 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
+import { isFutureDate } from '../../utils/validation'
 import { Link, useSearchParams } from 'react-router-dom'
+import { Droplet, Siren } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useAppData } from '../../context/AppDataContext'
 import { useToast } from '../../context/ToastContext'
@@ -12,6 +14,7 @@ import {
   Select,
   StatusBadge,
 } from '../../components/ui'
+import { IconPageHeader, PageContainer } from '../../components/PageChrome'
 import { BLOOD_GROUPS, type RequestUrgency } from '../../types'
 
 const STEPS = [
@@ -57,6 +60,8 @@ export function BloodRequestPage() {
       if (!hospital.trim()) e.hospital = 'Please enter the hospital or facility name.'
       if (!location.trim()) e.location = 'Please enter the location.'
       if (!requiredDate) e.requiredDate = 'Please select the required date.'
+      else if (!isFutureDate(requiredDate))
+        e.requiredDate = 'Please select today or a future date.'
     }
     if (step === 2) {
       if (!urgency) e.urgency = 'Please select urgency.'
@@ -105,10 +110,10 @@ export function BloodRequestPage() {
 
   if (submitted) {
     return (
-      <div className="mx-auto max-w-lg">
+      <PageContainer className="max-w-lg">
         <Card className="space-y-3 text-center">
-          <p className="text-success font-semibold">✓ Request Created</p>
-          <p className="text-navy font-semibold">✓ Searching for Donors</p>
+          <p className="font-semibold text-success">✓ Request Created</p>
+          <p className="font-semibold text-foreground">✓ Searching for Donors</p>
           <StatusBadge label="Matching in Progress" tone="info" icon={<span>🔄</span>} />
           <p className="text-sm text-muted">
             We are finding suitable available donors for {bloodGroup}.
@@ -122,20 +127,17 @@ export function BloodRequestPage() {
             </Link>
           </div>
         </Card>
-      </div>
+      </PageContainer>
     )
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-navy">
-          {urgency === 'EMERGENCY' ? '🚨 Emergency Blood Request' : 'Request Blood'}
-        </h1>
-        <p className="text-sm text-muted">
-          Complete each step. You can go back or cancel anytime before confirming.
-        </p>
-      </div>
+    <PageContainer className="max-w-2xl">
+      <IconPageHeader
+        icon={urgency === 'EMERGENCY' ? Siren : Droplet}
+        title={urgency === 'EMERGENCY' ? 'Emergency Blood Request' : 'Request Blood'}
+        subtitle="Complete each step. You can go back or cancel anytime before confirming."
+      />
 
       <ProgressIndicator steps={STEPS} current={step} />
 
@@ -326,6 +328,6 @@ export function BloodRequestPage() {
           doSubmit()
         }}
       />
-    </div>
+    </PageContainer>
   )
 }

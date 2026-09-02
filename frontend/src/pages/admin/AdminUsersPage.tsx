@@ -1,4 +1,6 @@
-import { Card } from '../../components/ui'
+import { Users } from 'lucide-react'
+import { StatusBadge } from '../../components/ui'
+import { IconPageHeader, ListCard, PageContainer } from '../../components/PageChrome'
 
 export function AdminUsersPage() {
   const users = [
@@ -7,19 +9,26 @@ export function AdminUsersPage() {
     { name: 'Dr. Siva Rajan', role: 'Hospital', email: 'hospital@bloodbridge.com' },
     { name: 'Meena Fernando', role: 'Blood Bank', email: 'bloodbank@bloodbridge.com' },
   ]
+
   return (
-    <div className="mx-auto w-full max-w-none space-y-4">
-      <h1 className="text-2xl font-extrabold text-navy">Users</h1>
-      <p className="text-sm text-muted">Overview of accounts on the platform.</p>
-      {users.map((u) => (
-        <Card key={u.email} className="flex justify-between gap-3">
-          <div>
-            <p className="font-semibold text-navy">{u.name}</p>
-            <p className="text-sm text-muted">{u.email}</p>
-          </div>
-          <p className="text-sm font-medium text-muted">{u.role}</p>
-        </Card>
-      ))}
-    </div>
+    <PageContainer>
+      <IconPageHeader
+        icon={Users}
+        title="Users"
+        subtitle="Overview of accounts on the LifeDrop platform."
+      />
+
+      <div className="space-y-4">
+        {users.map((u) => (
+          <ListCard key={u.email} className="flex justify-between gap-3 p-5">
+            <div>
+              <p className="font-semibold text-foreground">{u.name}</p>
+              <p className="text-sm text-muted">{u.email}</p>
+            </div>
+            <StatusBadge label={u.role} tone="neutral" />
+          </ListCard>
+        ))}
+      </div>
+    </PageContainer>
   )
 }

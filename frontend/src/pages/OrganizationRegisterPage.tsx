@@ -1,17 +1,34 @@
 import { useState, type FormEvent } from 'react'
+import {
+  ArrowRight,
+  Building2,
+  CheckCircle2,
+  ChevronDown,
+  Eye,
+  EyeOff,
+  FileText,
+  Info,
+  Mail,
+  MapPin,
+  Paperclip,
+  Phone,
+  Lock,
+  User,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Building2, CheckCircle2 } from 'lucide-react'
-import { Button, Card, ErrorMessage, Input, Select, StatusBadge } from '../components/ui'
+import { AuthField, authFieldClass } from '../components/AuthField'
+import { OrganizationRegisterShell } from '../components/OrganizationRegisterShell'
 import { BrandMark } from '../components/BrandMark'
 import { ThemeToggle } from '../components/ThemeToggle'
+import { Button, Card, ErrorMessage, StatusBadge } from '../components/ui'
 import { apiErrorMessage, registerOrganization } from '../api/bloodBridge'
 import { validateOrgForm, isValidEmail, isValidPhone } from '../utils/validation'
 import type { OrgType } from '../types'
 
-
 export function OrganizationRegisterPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [formError, setFormError] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [form, setForm] = useState({
@@ -82,16 +99,13 @@ export function OrganizationRegisterPage() {
 
   if (submitted) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-surface py-12">
+      <div className="min-h-screen bg-[#F4F6F8] px-4 py-10 sm:px-6">
         <div className="absolute right-5 top-5 z-10 sm:right-8">
-          <ThemeToggle />
+          <ThemeToggle variant="pill" />
         </div>
-        <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(227,6,19,0.08),_transparent_50%)]"
-          aria-hidden
-        />
-        <div className="container-app relative mx-auto max-w-lg">
-          <Card className="rounded-3xl p-8 text-center shadow-xl shadow-brand/5">
+        <div className="mx-auto max-w-lg pt-8">
+          <BrandMark />
+          <Card className="mt-8 rounded-[1.75rem] p-8 text-center shadow-[0_16px_48px_rgba(11,28,51,0.08)]">
             <CheckCircle2 className="mx-auto h-12 w-12 text-success" aria-hidden />
             <h1 className="mt-4 text-2xl font-extrabold text-navy">Application Submitted</h1>
             <p className="mt-2 text-muted">
@@ -106,10 +120,12 @@ export function OrganizationRegisterPage() {
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link to="/login">
-                <Button>Go to Login</Button>
+                <Button className="rounded-xl">Go to Login</Button>
               </Link>
               <Link to="/">
-                <Button variant="outline">Back to Home</Button>
+                <Button variant="outline" className="rounded-xl">
+                  Back to Home
+                </Button>
               </Link>
             </div>
           </Card>
@@ -119,146 +135,203 @@ export function OrganizationRegisterPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-surface py-10">
-      <div className="absolute right-5 top-5 z-10 sm:right-8">
-        <ThemeToggle />
-      </div>
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(227,6,19,0.07),_transparent_50%)]"
-        aria-hidden
-      />
-      <div className="container-app relative mx-auto max-w-xl">
-        <div className="mb-6">
-          <BrandMark />
-        </div>
-        <Card className="rounded-3xl p-6 shadow-xl shadow-brand/5 sm:p-8">
-          <div className="mb-2 flex items-center gap-2 text-brand">
-            <Building2 className="h-6 w-6" />
-            <span className="font-extrabold">Organization Verification</span>
+    <OrganizationRegisterShell>
+      {formError && (
+        <ErrorMessage title="Could not submit" message={formError} />
+      )}
+
+      <form className="mt-6 space-y-5" onSubmit={onSubmit} noValidate>
+        <AuthField label="Organization Name" icon={Building2} required error={errors.name}>
+          <input
+            required
+            value={form.name}
+            onChange={(e) => set('name', e.target.value)}
+            placeholder="Enter organization name"
+            className={authFieldClass(errors.name)}
+          />
+        </AuthField>
+
+        <AuthField label="Organization Type" icon={Building2} required error={errors.type}>
+          <select
+            required
+            value={form.type}
+            onChange={(e) => set('type', e.target.value)}
+            className={`${authFieldClass(errors.type)} appearance-none pr-10`}
+          >
+            <option value="">Select type</option>
+            <option value="HOSPITAL">Hospital</option>
+            <option value="BLOOD_BANK">Blood Bank</option>
+          </select>
+          <ChevronDown
+            className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+            aria-hidden
+          />
+        </AuthField>
+
+        <AuthField
+          label="Registration Number"
+          icon={FileText}
+          required
+          error={errors.registrationNumber}
+          hint="Official government or health authority registration ID"
+        >
+          <input
+            required
+            value={form.registrationNumber}
+            onChange={(e) => set('registrationNumber', e.target.value)}
+            placeholder="Enter registration number"
+            className={authFieldClass(errors.registrationNumber)}
+          />
+        </AuthField>
+
+        <AuthField label="Staff Contact Name" icon={User} required error={errors.staffName}>
+          <input
+            required
+            value={form.staffName}
+            onChange={(e) => set('staffName', e.target.value)}
+            placeholder="Full name of the contact person"
+            className={authFieldClass(errors.staffName)}
+          />
+        </AuthField>
+
+        <AuthField
+          label="Official Email"
+          icon={Mail}
+          required
+          error={errors.email}
+          hint="Used to sign in after verification"
+        >
+          <input
+            type="email"
+            required
+            value={form.email}
+            onChange={(e) => set('email', e.target.value)}
+            placeholder="official@organization.lk"
+            autoComplete="email"
+            className={authFieldClass(errors.email)}
+          />
+        </AuthField>
+
+        <AuthField
+          label="Password"
+          icon={Lock}
+          required
+          error={errors.password}
+          hint="At least 8 characters — use this after admin approval"
+        >
+          <input
+            type={showPassword ? 'text' : 'password'}
+            required
+            value={form.password}
+            onChange={(e) => set('password', e.target.value)}
+            placeholder="Create a strong password"
+            autoComplete="new-password"
+            className={`${authFieldClass(errors.password)} pr-11`}
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-muted hover:text-foreground"
+            onClick={() => setShowPassword((v) => !v)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </AuthField>
+
+        <AuthField label="Phone" icon={Phone} required error={errors.phone}>
+          <input
+            required
+            value={form.phone}
+            onChange={(e) => set('phone', e.target.value)}
+            placeholder="Enter contact number"
+            autoComplete="tel"
+            className={authFieldClass(errors.phone)}
+          />
+        </AuthField>
+
+        <AuthField label="Address" icon={MapPin} required error={errors.address}>
+          <input
+            required
+            value={form.address}
+            onChange={(e) => set('address', e.target.value)}
+            placeholder="Official address of the organization"
+            className={authFieldClass(errors.address)}
+          />
+        </AuthField>
+
+        <AuthField
+          label="Staff ID"
+          icon={User}
+          required
+          error={errors.staffId}
+          hint="Your employee or staff identifier at the organization"
+        >
+          <input
+            required
+            value={form.staffId}
+            onChange={(e) => set('staffId', e.target.value)}
+            placeholder="Employee or staff identifier"
+            className={authFieldClass(errors.staffId)}
+          />
+        </AuthField>
+
+        <div>
+          <label htmlFor="document" className="mb-1.5 block text-sm font-semibold text-navy">
+            Supporting Document
+            <span className="ml-0.5 text-brand" aria-hidden>
+              *
+            </span>
+          </label>
+          <div className="relative">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center border-r border-border text-muted">
+              <Paperclip className="h-4 w-4" aria-hidden />
+            </span>
+            <input
+              id="document"
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              className={`${authFieldClass(errors.documentName)} file:mr-3 file:rounded-lg file:border-0 file:bg-surface file:px-3 file:py-1 file:text-xs file:font-semibold`}
+              onChange={(e) => onFile(e.target.files?.[0] || null)}
+              aria-invalid={!!errors.documentName}
+            />
           </div>
-          <h1 className="text-2xl font-extrabold text-navy">Register your organization</h1>
-          <p className="mt-2 text-sm leading-relaxed text-muted">
-            To protect patients and donors, hospital and blood bank accounts must be verified before
-            accessing LifeDrop organization features.
+          <p className="mt-1.5 text-xs text-muted">
+            Upload registration certificate / license / authorization letter (PDF, JPG, PNG).
           </p>
-
-          {formError && (
-            <div className="mt-4">
-              <ErrorMessage title="Could not submit" message={formError} />
-            </div>
+          {errors.documentName && (
+            <p className="mt-1.5 text-sm text-critical" role="alert">
+              {errors.documentName}
+            </p>
           )}
+          {form.documentName && !errors.documentName && (
+            <p className="mt-1.5 text-xs text-muted">Selected: {form.documentName}</p>
+          )}
+        </div>
 
-          <form className="mt-6 space-y-4" onSubmit={onSubmit} noValidate>
-            <Input
-              label="Organization Name"
-              required
-              value={form.name}
-              onChange={(e) => set('name', e.target.value)}
-              error={errors.name}
-            />
-            <Select
-              label="Organization Type"
-              required
-              value={form.type}
-              onChange={(e) => set('type', e.target.value)}
-              options={[
-                { value: 'HOSPITAL', label: 'Hospital' },
-                { value: 'BLOOD_BANK', label: 'Blood Bank' },
-              ]}
-              error={errors.type}
-              placeholder="Select type"
-            />
-            <Input
-              label="Registration Number"
-              required
-              value={form.registrationNumber}
-              onChange={(e) => set('registrationNumber', e.target.value)}
-              error={errors.registrationNumber}
-              hint="Official government or health authority registration ID"
-            />
-            <Input
-              label="Staff Contact Name"
-              required
-              value={form.staffName}
-              onChange={(e) => set('staffName', e.target.value)}
-              error={errors.staffName}
-            />
-            <Input
-              label="Official Email"
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => set('email', e.target.value)}
-              error={errors.email}
-              hint="Used to sign in after verification"
-            />
-            <Input
-              label="Password"
-              type="password"
-              required
-              value={form.password}
-              onChange={(e) => set('password', e.target.value)}
-              error={errors.password}
-              hint="At least 8 characters — use this after admin approval"
-              autoComplete="new-password"
-            />
-            <Input
-              label="Phone"
-              required
-              value={form.phone}
-              onChange={(e) => set('phone', e.target.value)}
-              error={errors.phone}
-            />
-            <Input
-              label="Address"
-              required
-              value={form.address}
-              onChange={(e) => set('address', e.target.value)}
-              error={errors.address}
-            />
-            <Input
-              label="Staff ID"
-              required
-              value={form.staffId}
-              onChange={(e) => set('staffId', e.target.value)}
-              error={errors.staffId}
-              hint="Your employee or staff identifier at the organization"
-            />
-            <div>
-              <label htmlFor="document" className="mb-1.5 block text-sm font-medium text-navy">
-                Supporting Document<span className="text-brand">*</span>
-              </label>
-              <input
-                id="document"
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                className="w-full rounded-xl border border-border bg-white px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-surface file:px-3 file:py-1.5 file:text-sm file:font-medium"
-                onChange={(e) => onFile(e.target.files?.[0] || null)}
-                aria-invalid={!!errors.documentName}
-              />
-              {errors.documentName && (
-                <p className="mt-1.5 text-sm text-critical" role="alert">
-                  {errors.documentName}
-                </p>
-              )}
-              {form.documentName && !errors.documentName && (
-                <p className="mt-1.5 text-xs text-muted">Selected: {form.documentName}</p>
-              )}
-            </div>
+        <div className="flex gap-3 rounded-xl border border-brand/15 bg-critical-bg/40 p-4">
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden />
+          <p className="text-sm leading-relaxed text-navy">
+            <span className="font-bold text-brand">Important:</span> Our team will review your
+            information. You will be notified via email once your organization is verified.
+          </p>
+        </div>
 
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Button type="submit" loading={loading}>
-                Submit for Verification
-              </Button>
-              <Link to="/">
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-              </Link>
-            </div>
-          </form>
-        </Card>
-      </div>
-    </div>
+        <div className="space-y-3 pt-1">
+          <Button
+            type="submit"
+            loading={loading}
+            className="min-h-12 w-full gap-2 rounded-xl text-base !shadow-md"
+          >
+            Submit for Verification
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Button>
+          <Link to="/" className="block">
+            <Button type="button" variant="outline" className="min-h-12 w-full rounded-xl border-2">
+              Cancel
+            </Button>
+          </Link>
+        </div>
+      </form>
+    </OrganizationRegisterShell>
   )
 }

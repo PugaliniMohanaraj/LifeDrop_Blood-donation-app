@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ToastProvider } from './context/ToastContext'
@@ -13,7 +13,10 @@ import { GuidePage } from './pages/public/GuidePage'
 import { FaqsPage } from './pages/public/FaqsPage'
 import { StoriesPage } from './pages/public/StoriesPage'
 import { ContactPage } from './pages/public/ContactPage'
+import { BloodAvailabilityPage } from './pages/public/BloodAvailabilityPage'
+import { BloodAvailabilityDetailPage } from './pages/public/BloodAvailabilityDetailPage'
 import { LoginPage } from './pages/LoginPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { OrganizationRegisterPage } from './pages/OrganizationRegisterPage'
 import { DonorDashboard } from './pages/donor/DonorDashboard'
@@ -44,6 +47,7 @@ import { AdminVerifyDetailPage } from './pages/admin/AdminVerifyDetailPage'
 import { AdminUsersPage } from './pages/admin/AdminUsersPage'
 import { AdminReportsPage } from './pages/admin/AdminReportsPage'
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 function AppRoutes() {
   return (
@@ -56,7 +60,10 @@ function AppRoutes() {
       <Route path="/faqs" element={<FaqsPage />} />
       <Route path="/stories" element={<StoriesPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/blood-availability" element={<BloodAvailabilityPage />} />
+      <Route path="/blood-availability/:organizationId" element={<BloodAvailabilityDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/organization/register" element={<OrganizationRegisterPage />} />
 
@@ -133,7 +140,7 @@ function AppRoutes() {
         <Route path="/admin/settings" element={<AdminSettingsPage />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }

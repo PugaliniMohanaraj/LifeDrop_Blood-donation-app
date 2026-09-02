@@ -9,6 +9,8 @@ export const publicImages = {
     faqs: '/images/blood-lab.jpg',
     contact: '/images/hospital-care.jpg',
     howItWorks: '/images/medical-team.jpg',
+    register: '/images/register-care.png',
+    login: '/images/login-care.png',
   },
   blogs: {
     colombo: '/blogs/colombo-guide.jpg',

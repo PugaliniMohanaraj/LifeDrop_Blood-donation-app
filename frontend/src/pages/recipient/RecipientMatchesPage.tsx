@@ -1,9 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Users } from 'lucide-react'
 import { apiErrorMessage, fetchMatches } from '../../api/bloodBridge'
 import { useAppData } from '../../context/AppDataContext'
 import { useToast } from '../../context/ToastContext'
-import { Button, Card, EmptyState, LoadingSpinner, StatusBadge, Tooltip } from '../../components/ui'
+import {
+  Button,
+  EmptyState,
+  LoadingSpinner,
+  StatusBadge,
+  Tooltip,
+} from '../../components/ui'
+import { GradientBanner, IconPageHeader, ListCard, PageContainer } from '../../components/PageChrome'
 import type { DonorMatch } from '../../types'
 
 export function RecipientMatchesPage() {
@@ -51,71 +59,93 @@ export function RecipientMatchesPage() {
   }
 
   if (loading) {
-    return <LoadingSpinner label="Finding suitable donors…" />
+    return (
+      <PageContainer>
+        <LoadingSpinner label="Finding suitable donors…" />
+      </PageContainer>
+    )
   }
 
   if (!activeRequest) {
     return (
-      <EmptyState
-        title="No active blood request"
-        description="Create a request first so we can match donors to the right blood group."
-        actionLabel="Create request"
-        onAction={() => navigate('/recipient/request')}
-      />
+      <PageContainer>
+        <IconPageHeader
+          icon={Users}
+          title="Donor Matches"
+          subtitle="Create a request first so we can match donors to the right blood group."
+        />
+        <EmptyState
+          title="No active blood request"
+          description="Create a request first so we can match donors to the right blood group."
+          actionLabel="Create request"
+          onAction={() => navigate('/recipient/request')}
+        />
+      </PageContainer>
     )
   }
 
   if (!matches.length) {
     return (
-      <EmptyState
-        title="No suitable donors found yet"
-        description="When available donors match your blood request, they will appear here."
-      />
+      <PageContainer>
+        <IconPageHeader
+          icon={Users}
+          title="Donor Matches"
+          subtitle={`Searching for ${activeRequest.bloodGroup} donors for your request.`}
+        />
+        <EmptyState
+          title="No suitable donors found yet"
+          description="When available donors match your blood request, they will appear here."
+        />
+      </PageContainer>
     )
   }
 
   return (
-    <div className="mx-auto w-full max-w-none space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-navy">
-          {matches.length} Suitable Donors Found
-        </h1>
-        <p className="text-sm text-muted">
-          Inviting for your {activeRequest.bloodGroup} request ({activeRequest.units} units).{' '}
-          <Link to="/recipient/requests" className="font-medium text-brand hover:underline">
-            View requests
-          </Link>
-        </p>
-      </div>
+    <PageContainer>
+      <IconPageHeader
+        icon={Users}
+        title={`${matches.length} Suitable Donors Found`}
+        subtitle={
+          <>
+            Inviting for your {activeRequest.bloodGroup} request ({activeRequest.units} units).{' '}
+            <Link to="/recipient/requests" className="font-medium text-brand hover:underline">
+              View requests
+            </Link>
+          </>
+        }
+      />
 
       {sendingId && <LoadingSpinner label="Sending request to donor…" />}
 
       <div className="grid gap-4">
         {matches.map((m) => (
-          <Card key={m.id} as="article">
+          <ListCard key={m.id} className="p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge
                     label={m.available ? 'Available' : 'Unavailable'}
                     tone={m.available ? 'success' : 'neutral'}
-                    icon={<span>{m.available ? '🟢' : '⚪'}</span>}
+                    icon={<span>{m.available ? '✓' : '—'}</span>}
                   />
                   <StatusBadge
                     label={m.eligible ? 'Eligible' : 'Not eligible'}
                     tone={m.eligible ? 'success' : 'warning'}
+                    icon={<span>{m.eligible ? '✓' : '!'}</span>}
                   />
                 </div>
-                <p className="mt-3 font-bold text-navy">{m.name}</p>
+                <p className="mt-3 text-lg font-bold text-foreground">{m.name}</p>
                 <dl className="mt-2 space-y-1 text-sm text-muted">
                   <div>
-                    Blood Group: <span className="font-medium text-navy">{m.bloodGroup}</span>
+                    Blood Group:{' '}
+                    <span className="font-medium text-foreground">{m.bloodGroup}</span>
                   </div>
                   <div>
-                    Distance: <span className="font-medium text-navy">{m.distanceKm} km</span>
+                    Distance:{' '}
+                    <span className="font-medium text-foreground">{m.distanceKm} km</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    Match: <span className="font-medium text-navy">{m.matchScore}%</span>
+                    Match: <span className="font-medium text-foreground">{m.matchScore}%</span>
                     <Tooltip text="Match score is based on blood-group compatibility, eligibility, availability and location. It is not a medical guarantee." />
                   </div>
                 </dl>
@@ -127,9 +157,20 @@ export function RecipientMatchesPage() {
                 {sent.has(m.id) ? 'Request Sent' : 'Send Request'}
               </Button>
             </div>
-          </Card>
+          </ListCard>
         ))}
       </div>
-    </div>
+
+      <GradientBanner
+        variant="success"
+        title="Donor invited?"
+        description="Track responses and request status from your requests page."
+        icon={<Users className="h-5 w-5 text-success" />}
+      >
+        <Link to="/recipient/requests">
+          <Button variant="outline">View Requests</Button>
+        </Link>
+      </GradientBanner>
+    </PageContainer>
   )
 }

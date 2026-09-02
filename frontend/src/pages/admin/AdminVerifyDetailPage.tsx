@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Building2 } from 'lucide-react'
 import { fetchOrganization } from '../../api/bloodBridge'
 import { useAppData } from '../../context/AppDataContext'
 import { useToast } from '../../context/ToastContext'
@@ -16,6 +16,7 @@ import {
   verificationLabel,
   verificationTone,
 } from '../../components/ui'
+import { IconPageHeader, ListCard, PageContainer } from '../../components/PageChrome'
 import type { Organization } from '../../types'
 
 export function AdminVerifyDetailPage() {
@@ -48,16 +49,24 @@ export function AdminVerifyDetailPage() {
       .finally(() => setLoading(false))
   }, [id, organizations])
 
-  if (loading) return <LoadingSpinner label="Loading application…" />
+  if (loading) {
+    return (
+      <PageContainer>
+        <LoadingSpinner label="Loading application…" />
+      </PageContainer>
+    )
+  }
 
   if (!org) {
     return (
-      <EmptyState
-        title="Application not found"
-        description="This organization application may already be processed."
-        actionLabel="Back to list"
-        onAction={() => navigate('/admin/verify')}
-      />
+      <PageContainer>
+        <EmptyState
+          title="Application not found"
+          description="This organization application may already be processed."
+          actionLabel="Back to list"
+          onAction={() => navigate('/admin/verify')}
+        />
+      </PageContainer>
     )
   }
 
@@ -77,49 +86,41 @@ export function AdminVerifyDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-xl space-y-4">
+    <PageContainer className="max-w-2xl">
       <Link
         to="/admin/verify"
-        className="inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-navy"
+        className="inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" /> Back to verifications
       </Link>
-      <Card>
+
+      <IconPageHeader
+        icon={Building2}
+        title={org.name}
+        subtitle="Review organization details before approving or rejecting."
+      />
+
+      <ListCard className="p-5 sm:p-6">
         <StatusBadge
           label={verificationLabel(org.status)}
           tone={verificationTone(org.status)}
           icon={<span>{org.status === 'PENDING' ? '🟡' : org.status === 'APPROVED' ? '✓' : '✕'}</span>}
         />
-        <h1 className="mt-3 text-2xl font-extrabold text-navy">{org.name}</h1>
-        <dl className="mt-4 space-y-2 text-sm">
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Type</dt>
-            <dd className="font-medium">{org.type === 'HOSPITAL' ? 'Hospital' : 'Blood Bank'}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Registration number</dt>
-            <dd className="font-medium">{org.registrationNumber}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Official email</dt>
-            <dd className="font-medium">{org.email}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Phone</dt>
-            <dd className="font-medium">{org.phone}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Address</dt>
-            <dd className="font-medium text-right">{org.address}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Staff ID</dt>
-            <dd className="font-medium">{org.staffId}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Supporting document</dt>
-            <dd className="font-medium">{org.documentName || 'Attached'}</dd>
-          </div>
+        <dl className="mt-4 space-y-3 text-sm">
+          {[
+            ['Type', org.type === 'HOSPITAL' ? 'Hospital' : 'Blood Bank'],
+            ['Registration number', org.registrationNumber],
+            ['Official email', org.email],
+            ['Phone', org.phone],
+            ['Address', org.address],
+            ['Staff ID', org.staffId],
+            ['Supporting document', org.documentName || 'Attached'],
+          ].map(([label, value]) => (
+            <div key={label} className="flex justify-between gap-4 border-b border-border pb-2 last:border-0">
+              <dt className="text-muted">{label}</dt>
+              <dd className="font-medium text-right text-foreground">{value}</dd>
+            </div>
+          ))}
         </dl>
 
         {org.status === 'PENDING' && (
@@ -130,7 +131,7 @@ export function AdminVerifyDetailPage() {
             </Button>
           </div>
         )}
-      </Card>
+      </ListCard>
 
       <ConfirmationDialog
         open={confirmApprove}
@@ -185,6 +186,6 @@ export function AdminVerifyDetailPage() {
           />
         </form>
       </Modal>
-    </div>
+    </PageContainer>
   )
 }

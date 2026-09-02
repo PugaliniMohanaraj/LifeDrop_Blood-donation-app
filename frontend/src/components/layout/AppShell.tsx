@@ -1,11 +1,13 @@
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
-import { LogOut, Menu, X, CheckCircle2, LifeBuoy, Mail, Phone } from 'lucide-react'
+import { Bell, LogOut, Menu, X, LifeBuoy, Mail, Phone } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { getNavForRole } from '../../config/navigation'
-import { Modal, StatusBadge } from '../ui'
+import type { UserRole } from '../../types'
+import { Modal, StatusBadge, ConfirmationDialog } from '../ui'
 import { ThemeToggle } from '../ThemeToggle'
 import { UserAvatar } from '../UserAvatar'
+import { SkipLink } from '../SkipLink'
 import { useNotifications } from '../../hooks/useNotifications'
 import { useToast } from '../../context/ToastContext'
 import { Button } from '../ui/Button'
@@ -16,12 +18,15 @@ export function AppShell() {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
+  const [logoutOpen, setLogoutOpen] = useState(false)
   const { items: notifications } = useNotifications()
 
   if (!user) return null
 
   const nav = getNavForRole(user.role)
   const unreadCount = notifications.filter((n) => !n.read).length
+  const notificationsPath = nav.find((item) => item.label === 'Notifications')?.to
+  const roleLabel = roleDisplayName(user.role)
 
   const handleLogout = () => {
     logout()
@@ -55,7 +60,7 @@ export function AppShell() {
       <div className="mb-8 flex items-center gap-3 px-1">
         <img
           src="/logo.png"
-          alt=""
+          alt="LifeDrop"
           className="h-11 w-11 rounded-full object-cover ring-2 ring-white/15"
         />
         <div>
@@ -97,7 +102,7 @@ export function AppShell() {
             <button
               type="button"
               onClick={() => setHelpOpen(true)}
-              className="mt-3 inline-flex min-h-9 items-center rounded-full bg-white/15 px-4 text-xs font-semibold text-white transition hover:bg-white/25"
+              className="mt-3 inline-flex min-h-9 items-center rounded-full border border-white/40 bg-white px-4 text-xs font-semibold text-brand transition hover:bg-white/90"
             >
               Contact support
             </button>
@@ -107,7 +112,7 @@ export function AppShell() {
 
       <button
         type="button"
-        onClick={handleLogout}
+        onClick={() => setLogoutOpen(true)}
         className="mt-4 flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white"
       >
         <LogOut className="h-4 w-4" aria-hidden />
@@ -123,6 +128,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(227,6,19,0.04),_transparent_45%),var(--color-surface)] lg:flex">
+      <SkipLink />
       <aside className="hidden w-[17rem] shrink-0 flex-col bg-sidebar p-5 lg:flex">
         <SidebarContent />
       </aside>
@@ -152,7 +158,7 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b border-border/80 bg-card/95 backdrop-blur-md">
           <div className="flex min-h-[4.25rem] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
                 className="rounded-full p-2 text-foreground hover:bg-surface lg:hidden"
@@ -161,43 +167,60 @@ export function AppShell() {
               >
                 <Menu className="h-5 w-5" />
               </button>
-              {user.role === 'DONOR' && (
-                <UserAvatar name={user.fullName} photoUrl={user.photoUrl} size="sm" />
-              )}
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-bold text-foreground">{user.fullName}</p>
-                  {user.verified !== false && user.role === 'DONOR' && (
-                    <CheckCircle2 className="h-4 w-4 text-success" aria-label="Verified" />
-                  )}
-                </div>
-                <p className="text-xs text-muted">{user.email}</p>
+              <UserAvatar name={user.fullName} photoUrl={user.photoUrl} size="sm" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-foreground">{user.fullName}</p>
+                <p className="truncate text-xs text-muted">{roleLabel}</p>
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
               <ThemeToggle variant="ghost" className="sm:hidden" />
-              {user.role === 'DONOR' && (
+              {notificationsPath && (
                 <Link
-                  to="/donor/profile"
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-sm font-semibold text-foreground transition hover:border-brand/40 hover:bg-critical-bg/30"
+                  to={notificationsPath}
+                  className="relative rounded-full p-2.5 text-foreground transition hover:bg-surface"
+                  aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ''}`}
                 >
-                  <UserAvatar name={user.fullName} photoUrl={user.photoUrl} />
-                  <span className="hidden sm:inline">Profile</span>
+                  <Bell className="h-5 w-5" aria-hidden />
+                  {unreadCount > 0 && (
+                    <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
               )}
               {user.bloodGroup && (
                 <StatusBadge label={`Blood Group ${user.bloodGroup}`} tone="critical" />
               )}
-              {user.organizationName && user.verified && (
-                <StatusBadge label={`${user.organizationName} ✓ Verified`} tone="success" />
+              {user.organizationName && user.verified !== false && (
+                <span className="hidden sm:contents">
+                  <StatusBadge
+                    label={`${user.organizationName} ✓ Verified`}
+                    tone="success"
+                  />
+                </span>
               )}
             </div>
           </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <main id="main-content" className="flex-1 p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>
+
+      <ConfirmationDialog
+        open={logoutOpen}
+        title="Log out?"
+        message="You will need to sign in again to access your dashboard."
+        confirmLabel="Log out"
+        cancelLabel="Stay signed in"
+        danger
+        onConfirm={() => {
+          setLogoutOpen(false)
+          handleLogout()
+        }}
+        onCancel={() => setLogoutOpen(false)}
+      />
 
       <Modal
         open={helpOpen}
@@ -246,4 +269,21 @@ export function AppShell() {
       </Modal>
     </div>
   )
+}
+
+function roleDisplayName(role: UserRole): string {
+  switch (role) {
+    case 'DONOR':
+      return 'Donor'
+    case 'RECIPIENT':
+      return 'Recipient'
+    case 'HOSPITAL':
+      return 'Hospital Staff'
+    case 'BLOOD_BANK':
+      return 'Blood Bank Staff'
+    case 'ADMIN':
+      return 'Administrator'
+    default:
+      return 'User'
+  }
 }

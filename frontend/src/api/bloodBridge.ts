@@ -1,5 +1,10 @@
 import api from './client'
 import type {
+  BloodAvailabilityDetail,
+  BloodAvailabilityItem,
+  BloodAvailabilitySearchParams,
+} from '../types/bloodAvailability'
+import type {
   BloodGroup,
   BloodRequest,
   BloodStockItem,
@@ -46,6 +51,8 @@ type ApiStock = {
   bloodGroup: BloodGroup
   units: number
   level: StockLevel
+  component?: string
+  lastUpdated?: string
 }
 
 export function mapRequest(r: ApiRequest): BloodRequest {
@@ -261,4 +268,37 @@ export async function changePassword(
 export function apiErrorMessage(err: unknown, fallback: string): string {
   const e = err as { response?: { data?: { message?: string } }; message?: string }
   return e.response?.data?.message || fallback
+}
+
+export async function fetchBloodAvailability(
+  params: BloodAvailabilitySearchParams,
+): Promise<BloodAvailabilityItem[]> {
+  const { data } = await api.get<BloodAvailabilityItem[]>('/public/blood-availability', {
+    params: {
+      province: params.province || undefined,
+      district: params.district || undefined,
+      bloodGroup: params.bloodGroup || undefined,
+      component: params.component || 'WHOLE_BLOOD',
+      availabilityStatus: params.availability || 'ALL',
+      search: params.search || undefined,
+    },
+  })
+  return data
+}
+
+export async function fetchBloodAvailabilityDetail(
+  organizationId: string | number,
+  bloodGroup?: string,
+  component?: string,
+): Promise<BloodAvailabilityDetail> {
+  const { data } = await api.get<BloodAvailabilityDetail>(
+    `/public/blood-availability/${organizationId}`,
+    {
+      params: {
+        bloodGroup: bloodGroup || undefined,
+        component: component || 'WHOLE_BLOOD',
+      },
+    },
+  )
+  return data
 }

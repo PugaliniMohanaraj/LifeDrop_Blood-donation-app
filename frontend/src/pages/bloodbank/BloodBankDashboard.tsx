@@ -1,16 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AlertTriangle, CheckCircle2, Droplet, Mail } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { fetchPlatformStats, fetchStock } from '../../api/bloodBridge'
 import {
   Button,
-  Card,
   StatusBadge,
   stockIcon,
   stockLabel,
   stockTone,
 } from '../../components/ui'
-import { HeroPanel, PageHeader, StatCard } from '../../components/PageChrome'
+import {
+  HeroPanel,
+  ListCard,
+  MetricCard,
+  PageContainer,
+  PageHeader,
+  SectionHeader,
+} from '../../components/PageChrome'
 import type { BloodStockItem } from '../../types'
 
 export function BloodBankDashboard() {
@@ -38,17 +45,32 @@ export function BloodBankDashboard() {
   }, [])
 
   return (
-    <div className="mx-auto w-full max-w-none space-y-6">
+    <PageContainer>
       <PageHeader
         title={user?.organizationName || 'Blood Bank'}
         subtitle="LifeDrop blood bank workspace — stock, donations, and critical groups."
         action={<StatusBadge label="Verified" tone="success" icon={<span>✓</span>} />}
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Pending Invites" value={pendingInvites} />
-        <StatCard label="Requests Fulfilled" value={completed} tone="success" />
-        <StatCard label="Critical Blood Groups" value={critical.length} tone="critical" />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <MetricCard
+          label="Pending Invites"
+          value={pendingInvites}
+          icon={<Mail className="h-5 w-5 text-brand" />}
+          iconClass="bg-critical-bg"
+        />
+        <MetricCard
+          label="Requests Fulfilled"
+          value={completed}
+          icon={<CheckCircle2 className="h-5 w-5 text-success" />}
+          iconClass="bg-success-bg"
+        />
+        <MetricCard
+          label="Critical Blood Groups"
+          value={critical.length}
+          icon={<AlertTriangle className="h-5 w-5 text-critical" />}
+          iconClass="bg-critical-bg"
+        />
       </div>
 
       <HeroPanel
@@ -64,11 +86,11 @@ export function BloodBankDashboard() {
       </HeroPanel>
 
       <section>
-        <h2 className="mb-3 text-lg font-bold text-navy">Blood Stock</h2>
+        <SectionHeader title="Blood Stock" to="/blood-bank/stock" linkLabel="Manage stock" />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {stock.map((s) => (
-            <Card key={s.bloodGroup} className="transition hover:shadow-md">
-              <p className="text-lg font-extrabold text-navy">{s.bloodGroup}</p>
+            <ListCard key={s.bloodGroup} className="p-4">
+              <p className="text-lg font-extrabold text-foreground">{s.bloodGroup}</p>
               <p className="mt-1 text-sm text-muted">{s.units} units</p>
               <div className="mt-2">
                 <StatusBadge
@@ -77,14 +99,14 @@ export function BloodBankDashboard() {
                   icon={<span>{stockIcon(s.level)}</span>}
                 />
               </div>
-            </Card>
+            </ListCard>
           ))}
         </div>
       </section>
 
       {critical.length > 0 && (
-        <Card className="border-critical/30 bg-critical-bg/40">
-          <h2 className="font-bold text-navy">Critical Blood Groups</h2>
+        <ListCard className="border-critical/30 bg-critical-bg/40 p-5">
+          <h2 className="font-bold text-foreground">Critical Blood Groups</h2>
           <p className="mt-1 text-sm text-muted">These groups need urgent replenishment.</p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {critical.map((c) => (
@@ -92,13 +114,13 @@ export function BloodBankDashboard() {
                 <StatusBadge
                   label={`${c.bloodGroup} · ${c.units} units`}
                   tone="critical"
-                  icon={<span>🔴</span>}
+                  icon={<span>!</span>}
                 />
               </li>
             ))}
           </ul>
-        </Card>
+        </ListCard>
       )}
-    </div>
+    </PageContainer>
   )
 }

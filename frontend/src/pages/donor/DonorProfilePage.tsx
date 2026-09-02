@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react'
-import { Camera, X } from 'lucide-react'
+import { Camera, User, X } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
 import { UserAvatar } from '../../components/UserAvatar'
 import { Button, Card, Input, Select } from '../../components/ui'
+import { IconPageHeader, PageContainer } from '../../components/PageChrome'
 import { BLOOD_GROUPS, type BloodGroup } from '../../types'
 
 const MAX_PHOTO_BYTES = 2 * 1024 * 1024
@@ -47,12 +48,14 @@ export function DonorProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-navy">Profile</h1>
-        <p className="text-sm text-muted">Keep your details up to date so matching stays accurate.</p>
-      </div>
-      <Card className="space-y-4">
+    <PageContainer className="max-w-2xl">
+      <IconPageHeader
+        icon={User}
+        title="Profile"
+        subtitle="Keep your details up to date so matching stays accurate."
+      />
+
+      <Card className="space-y-4 p-5 sm:p-6">
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-surface px-4 py-5 text-center sm:flex-row sm:text-left">
           <UserAvatar name={fullName || user?.fullName || ''} photoUrl={photoUrl} size="md" />
           <div className="flex-1 space-y-2">
@@ -71,12 +74,7 @@ export function DonorProfilePage() {
                 {photoUrl ? 'Change photo' : 'Upload photo'}
               </Button>
               {photoUrl && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setPhotoUrl('')}
-                >
+                <Button type="button" variant="ghost" size="sm" onClick={() => setPhotoUrl('')}>
                   <X className="h-4 w-4" />
                   Remove
                 </Button>
@@ -107,6 +105,6 @@ export function DonorProfilePage() {
         <Input label="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
         <Button onClick={save}>Save Profile</Button>
       </Card>
-    </div>
+    </PageContainer>
   )
 }

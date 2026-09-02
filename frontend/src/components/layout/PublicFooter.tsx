@@ -6,13 +6,13 @@ import { publicLinks, footerExtraLinks } from '../../config/publicNav'
 
 function SocialIcon({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <a
-      href="#"
-      aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-brand"
+    <span
+      title={`${label} — coming soon`}
+      aria-label={`${label} (coming soon)`}
+      className="flex h-9 w-9 cursor-default items-center justify-center rounded-full bg-white/10 text-white/70"
     >
       {children}
-    </a>
+    </span>
   )
 }
 

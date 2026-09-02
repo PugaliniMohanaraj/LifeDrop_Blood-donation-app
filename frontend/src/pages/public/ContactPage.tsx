@@ -1,5 +1,4 @@
 import type { FormEvent } from 'react'
-import { useState } from 'react'
 import { Clock, Mail, MapPin, MessageSquare, Phone, Send } from 'lucide-react'
 import { PublicLayout } from '../../components/layout/PublicLayout'
 import { AnimatedCard } from '../../components/public/AnimatedCard'
@@ -76,17 +75,28 @@ function ContactHero() {
 
 export function ContactPage() {
   const { toast } = useToast()
-  const [sending, setSending] = useState(false)
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
-    setSending(true)
-    window.setTimeout(() => {
-      setSending(false)
-      form.reset()
-      toast('Message sent. We will get back to you within 1–2 business days.', 'success')
-    }, 600)
+    const fd = new FormData(form)
+    const name = String(fd.get('name') || '').trim()
+    const email = String(fd.get('email') || '').trim()
+    const subject = String(fd.get('subject') || '').trim()
+    const message = String(fd.get('message') || '').trim()
+
+    if (!name || !email || !subject || !message) {
+      toast('Please fill in all required fields.', 'error')
+      return
+    }
+
+    const mailSubject = encodeURIComponent(`[LifeDrop Contact] ${subject}`)
+    const mailBody = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\n${message}`,
+    )
+    window.location.href = `mailto:support@lifedrop.lk?subject=${mailSubject}&body=${mailBody}`
+    toast('Your email app will open so you can send the message.', 'info')
+    form.reset()
   }
 
   return (
@@ -170,7 +180,8 @@ export function ContactPage() {
           >
             <h2 className="text-xl font-extrabold text-navy sm:text-2xl">Send a message</h2>
             <p className="mt-2 text-sm text-muted">
-              Fill in the form below and we&apos;ll get back to you as soon as we can.
+              Fill in the form below — your email app will open so you can send the message to our
+              team.
             </p>
             <div className="mt-6 space-y-4">
               <Input label="Your name" name="name" required placeholder="Arun Kumar" />
@@ -213,15 +224,9 @@ export function ContactPage() {
                 />
               </div>
             </div>
-            <Button type="submit" className="mt-6 w-full gap-2" disabled={sending}>
-              {sending ? (
-                'Sending…'
-              ) : (
-                <>
-                  Send message
-                  <Send className="h-4 w-4" aria-hidden />
-                </>
-              )}
+            <Button type="submit" className="mt-6 w-full gap-2">
+              Send message
+              <Send className="h-4 w-4" aria-hidden />
             </Button>
           </AnimatedCard>
         </div>

@@ -20,6 +20,11 @@ public class AuthController {
         return authService.login(req);
     }
 
+    @PostMapping("/forgot-password")
+    public MessageResponse forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
+        return authService.requestPasswordReset(req);
+    }
+
     @PostMapping("/register/donor")
     public AuthResponse registerDonor(@Valid @RequestBody DonorRegisterRequest req) {
         return authService.registerDonor(req);

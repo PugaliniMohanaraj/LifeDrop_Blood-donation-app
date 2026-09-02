@@ -47,6 +47,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(() => ({ toast }), [toast])
 
+  const politeToasts = toasts.filter((t) => t.type !== 'error')
+  const assertiveToasts = toasts.filter((t) => t.type === 'error')
+
   return (
     <ToastContext.Provider value={value}>
       {children}
@@ -54,27 +57,38 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         className="fixed bottom-4 right-4 z-[100] flex w-[min(100%-2rem,22rem)] flex-col gap-2"
         role="region"
         aria-label="Notifications"
-        aria-live="polite"
       >
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            className={`flex items-start gap-3 rounded-xl px-4 py-3 shadow-lg ${styles[t.type]}`}
-            role="status"
-          >
-            <p className="flex-1 text-sm font-medium">{t.message}</p>
-            <button
-              type="button"
-              onClick={() => dismiss(t.id)}
-              className="rounded p-0.5 opacity-80 hover:opacity-100"
-              aria-label="Close notification"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        ))}
+        <div aria-live="polite" className="flex flex-col gap-2">
+          {politeToasts.map((t) => (
+            <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
+          ))}
+        </div>
+        <div aria-live="assertive" className="flex flex-col gap-2">
+          {assertiveToasts.map((t) => (
+            <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
+          ))}
+        </div>
       </div>
     </ToastContext.Provider>
+  )
+}
+
+function ToastItem({ toast: t, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {
+  return (
+    <div
+      className={`flex items-start gap-3 rounded-xl px-4 py-3 shadow-lg ${styles[t.type]}`}
+      role="status"
+    >
+      <p className="flex-1 text-sm font-medium">{t.message}</p>
+      <button
+        type="button"
+        onClick={() => onDismiss(t.id)}
+        className="rounded p-0.5 opacity-80 hover:opacity-100"
+        aria-label="Close notification"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
   )
 }
 

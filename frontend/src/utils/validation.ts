@@ -34,8 +34,12 @@ export function passwordsMatch(password: string, confirmPassword: string): boole
   return password === confirmPassword
 }
 
-export function required(value: string): boolean {
-  return value.trim().length > 0
+export function isFutureDate(dateStr: string): boolean {
+  if (!dateStr) return false
+  const selected = new Date(dateStr)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return selected >= today
 }
 
 export type FieldErrors = Record<string, string>
