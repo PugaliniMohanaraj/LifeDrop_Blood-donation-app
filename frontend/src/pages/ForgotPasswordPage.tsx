@@ -8,6 +8,7 @@ import { AuthShell } from '../components/AuthShell'
 import { Button, ErrorMessage } from '../components/ui'
 import { publicImages } from '../data/publicImages'
 import { isValidEmail } from '../utils/validation'
+import { contactInfo } from '../config/contact'
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -38,7 +39,7 @@ export function ForgotPasswordPage() {
         setFormError(
           apiErrorMessage(
             err,
-            'Could not process your request. Please try again or contact support@lifedrop.lk.',
+            `Could not process your request. Please try again or contact ${contactInfo.email}.`,
           ),
         )
       })
@@ -61,8 +62,8 @@ export function ForgotPasswordPage() {
           </p>
           <p className="mt-3 text-xs text-muted">
             Demo note: email delivery is simulated. Contact{' '}
-            <a href="mailto:support@lifedrop.lk" className="font-semibold text-brand hover:underline">
-              support@lifedrop.lk
+            <a href={`mailto:${contactInfo.email}`} className="font-semibold text-brand hover:underline">
+              {contactInfo.email}
             </a>{' '}
             if you need help signing in.
           </p>

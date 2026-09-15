@@ -6,26 +6,27 @@ import { PublicPageSection } from '../../components/public/PublicHero'
 import { publicImages } from '../../data/publicImages'
 import { Button, Input } from '../../components/ui'
 import { useToast } from '../../context/ToastContext'
+import { contactInfo, socialLinks } from '../../config/contact'
 
 const contactChannels = [
   {
     icon: Phone,
     title: 'Phone',
-    detail: '+94 11 200 2002',
+    detail: contactInfo.phoneDisplay,
     hint: 'Mon–Fri, 8:00 AM – 6:00 PM',
-    href: 'tel:+94112002002',
+    href: `tel:${contactInfo.phoneTel}`,
   },
   {
     icon: Mail,
     title: 'Email',
-    detail: 'support@lifedrop.lk',
+    detail: contactInfo.email,
     hint: 'We reply within 1–2 business days',
-    href: 'mailto:support@lifedrop.lk',
+    href: `mailto:${contactInfo.email}`,
   },
   {
     icon: MapPin,
     title: 'Office',
-    detail: 'Colombo 05, Sri Lanka',
+    detail: contactInfo.office,
     hint: 'National Blood Transfusion Service area',
     href: undefined,
   },
@@ -94,7 +95,7 @@ export function ContactPage() {
     const mailBody = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\n\n${message}`,
     )
-    window.location.href = `mailto:support@lifedrop.lk?subject=${mailSubject}&body=${mailBody}`
+    window.location.href = `mailto:${contactInfo.email}?subject=${mailSubject}&body=${mailBody}`
     toast('Your email app will open so you can send the message.', 'info')
     form.reset()
   }
@@ -128,6 +129,21 @@ export function ContactPage() {
               )}
               <p className="mt-1 text-xs text-muted">{channel.hint}</p>
             </AnimatedCard>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <p className="w-full text-center text-sm font-semibold text-navy sm:w-auto">Follow us</p>
+          {socialLinks.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-navy transition hover:border-brand hover:text-brand"
+            >
+              {label}
+            </a>
           ))}
         </div>
 

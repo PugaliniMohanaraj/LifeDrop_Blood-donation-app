@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Button, Input, Modal, Select } from '../ui'
 import { useToast } from '../../context/ToastContext'
 import { BLOOD_GROUPS } from '../../types'
+import { contactInfo } from '../../config/contact'
 
 const STORY_MAX = 5000
 
@@ -35,7 +36,7 @@ export function ShareStoryModal({ open, onClose }: ShareStoryModalProps) {
     const body = encodeURIComponent(
       `Name: ${fullName}\nCity: ${city}\nBlood group: ${bloodGroup}\n\nStory:\n${storyText}`,
     )
-    window.location.href = `mailto:support@lifedrop.lk?subject=${subject}&body=${body}`
+    window.location.href = `mailto:${contactInfo.email}?subject=${subject}&body=${body}`
     toast('Your email app will open to send your story for review.', 'info')
     onClose()
   }

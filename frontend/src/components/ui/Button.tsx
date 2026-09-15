@@ -34,11 +34,12 @@ export function Button({
   disabled,
   className = '',
   children,
+  type = 'button',
   ...props
 }: ButtonProps) {
   return (
     <button
-      type="button"
+      type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={`inline-flex items-center justify-center gap-2 font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variants[variant]} ${sizes[size]} ${className}`}

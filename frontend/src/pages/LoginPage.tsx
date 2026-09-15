@@ -14,6 +14,14 @@ import {
 } from '../utils/rememberEmail'
 import { validateLogin, isValidEmail } from '../utils/validation'
 
+const DEMO_ACCOUNTS = [
+  { label: 'Donor', email: 'donor@bloodbridge.com', password: 'password123' },
+  { label: 'Recipient', email: 'recipient@bloodbridge.com', password: 'password123' },
+  { label: 'Hospital', email: 'hospital@bloodbridge.com', password: 'password123' },
+  { label: 'Blood bank', email: 'bloodbank@bloodbridge.com', password: 'password123' },
+  { label: 'Admin', email: 'admin@bloodbridge.com', password: 'password123' },
+] as const
+
 function dashboardPath(role: string) {
   switch (role) {
     case 'DONOR':
@@ -66,6 +74,13 @@ export function LoginPage() {
     }
   }
 
+  const fillDemo = (account: (typeof DEMO_ACCOUNTS)[number]) => {
+    setEmail(account.email)
+    setPassword(account.password)
+    setErrors({})
+    setFormError('')
+  }
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
     setFormError('')
@@ -83,8 +98,7 @@ export function LoginPage() {
       if (rememberMe) saveRememberedEmail(email)
       else clearRememberedEmail()
       toast('Welcome back! You are signed in.', 'success')
-      const stored = JSON.parse(localStorage.getItem('bloodbridge_user') || '{}')
-      navigate(from || dashboardPath(stored.role), { replace: true })
+      navigate(from || dashboardPath(result.role || 'DONOR'), { replace: true })
     })
   }
 
@@ -171,16 +185,26 @@ export function LoginPage() {
         </Button>
       </form>
 
-      <details className="mt-5 rounded-xl border border-border bg-surface/60 p-4 text-xs text-muted">
-        <summary className="cursor-pointer font-semibold text-navy">Demo accounts</summary>
-        <ul className="mt-3 space-y-1.5">
-          <li>donor@bloodbridge.com / password123</li>
-          <li>recipient@bloodbridge.com / password123</li>
-          <li>hospital@bloodbridge.com / password123</li>
-          <li>bloodbank@bloodbridge.com / password123</li>
-          <li>admin@bloodbridge.com / password123</li>
+      <div className="mt-5 rounded-xl border border-brand/20 bg-brand/5 p-4">
+        <p className="text-sm font-semibold text-navy">Demo accounts</p>
+        <p className="mt-1 text-xs text-muted">
+          Use <strong className="font-semibold text-foreground">@bloodbridge.com</strong> emails
+          (not Gmail). Password for all: <strong className="font-semibold text-foreground">password123</strong>
+        </p>
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {DEMO_ACCOUNTS.map((account) => (
+            <li key={account.email}>
+              <button
+                type="button"
+                onClick={() => fillDemo(account)}
+                className="rounded-lg border border-border bg-white px-3 py-1.5 text-xs font-semibold text-navy transition hover:border-brand hover:text-brand dark:bg-card"
+              >
+                {account.label}
+              </button>
+            </li>
+          ))}
         </ul>
-      </details>
+      </div>
     </AuthShell>
   )
 }

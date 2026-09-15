@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { BrandMark } from './BrandMark'
 import { ThemeToggle } from './ThemeToggle'
 import { publicImages } from '../data/publicImages'
+import { contactInfo } from '../config/contact'
 
 const features = [
   {
@@ -87,12 +88,17 @@ export function OrganizationRegisterShell({
                 <div>
                   <p className="text-sm font-bold text-navy">Need help?</p>
                   <p className="mt-1 text-sm text-muted">Our support team is here to help you.</p>
-                  <p className="mt-2 text-sm font-semibold text-brand">+94 11 200 2002</p>
                   <a
-                    href="mailto:support@lifedrop.lk"
+                    href={`tel:${contactInfo.phoneTel}`}
+                    className="mt-2 block text-sm font-semibold text-brand hover:underline"
+                  >
+                    {contactInfo.phoneDisplay}
+                  </a>
+                  <a
+                    href={`mailto:${contactInfo.email}`}
                     className="text-sm font-semibold text-brand hover:underline"
                   >
-                    support@lifedrop.lk
+                    {contactInfo.email}
                   </a>
                 </div>
               </div>

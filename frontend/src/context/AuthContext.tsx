@@ -13,7 +13,10 @@ import type { AvailabilityStatus, BloodGroup, User, UserRole } from '../types'
 
 interface AuthContextValue {
   user: User | null
-  login: (email: string, password: string) => Promise<{ ok: boolean; message?: string }>
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<{ ok: boolean; message?: string; role?: UserRole }>
   logout: () => void
   registerDonor: (data: {
     fullName: string
@@ -39,7 +42,7 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 const STORAGE_KEY = 'bloodbridge_user'
 const TOKEN_KEY = 'bloodbridge_token'
 
-function loadUser(): User | null {
+export function loadStoredUser(): User | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     return raw ? (JSON.parse(raw) as User) : null
@@ -67,7 +70,7 @@ function mapApiUser(u: Record<string, unknown>): User {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => loadUser())
+  const [user, setUser] = useState<User | null>(() => loadStoredUser())
   const [registry, setRegistry] = useState(() => ({ ...DEMO_USERS }))
 
   const persist = useCallback((next: User | null, token?: string | null) => {
@@ -99,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       const { password: _, ...safe } = account
       persist(safe, null)
-      return { ok: true as const }
+      return { ok: true as const, role: safe.role }
     },
     [persist, registry],
   )
@@ -109,9 +112,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const { data } = await api.post('/auth/login', { email, password })
         const mapped = mapApiUser(data.user)
-        const prev = loadUser()
+        const prev = loadStoredUser()
         persist(mergeProfilePhoto(prev, mapped), data.token)
-        return { ok: true as const }
+        return { ok: true as const, role: mapped.role }
       } catch (err: unknown) {
         const axiosErr = err as {
           response?: { data?: { message?: string } }

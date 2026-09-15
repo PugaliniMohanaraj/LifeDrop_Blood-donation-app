@@ -87,6 +87,8 @@ Login → Blood Bank Dashboard
 
 Same design language as hospital (consistency).
 
+**Demo note:** Blood Stock and Requests use live APIs. **Donations** and **Reports** are UI prototypes with sample data (not live backend).
+
 ---
 
 ## 7. Admin
@@ -97,6 +99,15 @@ Login → Admin Dashboard
   → Approve | Reject (reason required)
   → Users / Reports / Settings
 ```
+
+**Demo note:** Organization verification is live. **Users** and **Reports** are UI prototypes with sample data (not live backend).
+
+---
+
+## Public contact & password recovery
+
+- **Contact** and **Share story** open a `mailto:` draft (honest hand-off to the user’s email client).
+- **Forgot password** returns a safe generic message; email delivery is simulated for this HCI demo.
 
 ---
 

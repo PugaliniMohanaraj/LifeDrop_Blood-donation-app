@@ -1,5 +1,5 @@
 import { Link, Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { loadStoredUser, useAuth } from '../../context/AuthContext'
 import type { UserRole } from '../../types'
 import { Button } from '../ui'
 
@@ -29,12 +29,13 @@ export function RequireAuth({
 }) {
   const { user } = useAuth()
   const location = useLocation()
+  const sessionUser = user ?? loadStoredUser()
 
-  if (!user) {
+  if (!sessionUser) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />
   }
 
-  if (roles && !roles.includes(user.role)) {
+  if (roles && !roles.includes(sessionUser.role)) {
     return (
       <div className="container-app py-16">
         <div className="mx-auto max-w-md rounded-2xl border border-critical/20 bg-critical-bg p-6 text-center">
@@ -45,7 +46,7 @@ export function RequireAuth({
           <p className="mt-1 text-sm text-muted">
             Switch to an account with the correct role, or go back to your dashboard.
           </p>
-          <Link to={dashboardPath(user.role)} className="mt-6 inline-block">
+          <Link to={dashboardPath(sessionUser.role)} className="mt-6 inline-block">
             <Button>Go to my dashboard</Button>
           </Link>
         </div>

@@ -11,6 +11,7 @@ import { SkipLink } from '../SkipLink'
 import { useNotifications } from '../../hooks/useNotifications'
 import { useToast } from '../../context/ToastContext'
 import { Button } from '../ui/Button'
+import { contactInfo } from '../../config/contact'
 
 export function AppShell() {
   const { user, logout } = useAuth()
@@ -34,7 +35,7 @@ export function AppShell() {
   }
 
   const copySupportEmail = async () => {
-    const email = 'support@lifedrop.lk'
+    const email = contactInfo.email
     try {
       await navigator.clipboard.writeText(email)
       toast('Email copied to clipboard.', 'success')
@@ -44,7 +45,10 @@ export function AppShell() {
   }
 
   const emailSupport = () => {
-    window.open('mailto:support@lifedrop.lk?subject=LifeDrop%20Support%20Request', '_self')
+    window.open(
+      `mailto:${contactInfo.email}?subject=LifeDrop%20Support%20Request`,
+      '_self',
+    )
     setHelpOpen(false)
   }
 
@@ -245,7 +249,7 @@ export function AppShell() {
             <Mail className="h-5 w-5 shrink-0 text-brand" aria-hidden />
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted">Email</p>
-              <p className="font-medium text-foreground">support@lifedrop.lk</p>
+              <p className="font-medium text-foreground">{contactInfo.email}</p>
             </div>
             <Button variant="ghost" size="sm" onClick={() => void copySupportEmail()}>
               Copy
@@ -255,7 +259,12 @@ export function AppShell() {
             <Phone className="h-5 w-5 shrink-0 text-brand" aria-hidden />
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted">Phone</p>
-              <p className="font-medium text-foreground">+94 11 200 2002</p>
+              <a
+                href={`tel:${contactInfo.phoneTel}`}
+                className="font-medium text-foreground hover:text-brand"
+              >
+                {contactInfo.phoneDisplay}
+              </a>
             </div>
           </li>
         </ul>

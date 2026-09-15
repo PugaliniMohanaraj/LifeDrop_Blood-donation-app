@@ -44,6 +44,10 @@ export function isFutureDate(dateStr: string): boolean {
 
 export type FieldErrors = Record<string, string>
 
+function required(value: string): boolean {
+  return value.trim().length > 0
+}
+
 function validateSignupEmail(email: string, errors: FieldErrors) {
   if (!required(email)) errors.email = 'Please enter your email address.'
   else if (!isGmailEmail(email))
