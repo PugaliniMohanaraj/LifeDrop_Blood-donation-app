@@ -3,7 +3,8 @@
 export const contactInfo = {
   phoneDisplay: '021 228 5186',
   phoneTel: '0212285186',
-  email: 'lifedrop@gmail.com',
+  /** Inbox that receives Contact / Share story / support messages */
+  email: 'pugalpugalini00001@gmail.com',
   office: 'Colombo, Sri Lanka',
 } as const
 

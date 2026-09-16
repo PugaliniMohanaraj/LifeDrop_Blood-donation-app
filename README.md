@@ -86,7 +86,7 @@ Honest HCI submission note — do **not** present these as fully live backend fe
 | Admin → Reports | Static / sample reporting UI |
 | Blood Bank → Reports | Static / sample reporting UI |
 | Blood Bank → Donations | Static / sample donation list UI |
-| Contact form | Opens the user’s email client (`mailto:`) |
+| Contact form | Delivered to `pugalpugalini00001@gmail.com` (FormSubmit); mailto fallback |
 | Forgot password | API acknowledges request; email delivery is simulated |
 | Share story | Opens `mailto:` for review |
 

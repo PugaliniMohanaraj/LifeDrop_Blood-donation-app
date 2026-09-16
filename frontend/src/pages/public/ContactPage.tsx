@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Clock, Mail, MapPin, MessageSquare, Phone, Send } from 'lucide-react'
 import { PublicLayout } from '../../components/layout/PublicLayout'
 import { AnimatedCard } from '../../components/public/AnimatedCard'
@@ -76,8 +76,9 @@ function ContactHero() {
 
 export function ContactPage() {
   const { toast } = useToast()
+  const [sending, setSending] = useState(false)
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
     const fd = new FormData(form)
@@ -91,13 +92,41 @@ export function ContactPage() {
       return
     }
 
-    const mailSubject = encodeURIComponent(`[LifeDrop Contact] ${subject}`)
-    const mailBody = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\n${message}`,
-    )
-    window.location.href = `mailto:${contactInfo.email}?subject=${mailSubject}&body=${mailBody}`
-    toast('Your email app will open so you can send the message.', 'info')
-    form.reset()
+    setSending(true)
+    try {
+      // Delivers the message into contactInfo.email inbox
+      const res = await fetch(`https://formsubmit.co/ajax/${contactInfo.email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          subject,
+          message,
+          _subject: `[LifeDrop Contact] ${subject}`,
+          _replyto: email,
+          _template: 'table',
+        }),
+      })
+
+      if (!res.ok) throw new Error('Submit failed')
+
+      toast(`Message sent to ${contactInfo.email}.`, 'success')
+      form.reset()
+    } catch {
+      const mailSubject = encodeURIComponent(`[LifeDrop Contact] ${subject}`)
+      const mailBody = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)
+      window.location.href = `mailto:${contactInfo.email}?subject=${mailSubject}&body=${mailBody}`
+      toast(
+        `Could not send automatically. Your email app will open to message ${contactInfo.email}.`,
+        'info',
+      )
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -191,13 +220,13 @@ export function ContactPage() {
           <AnimatedCard
             as="form"
             index={1}
-            onSubmit={handleSubmit}
+            onSubmit={(e) => void handleSubmit(e)}
             className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8"
           >
             <h2 className="text-xl font-extrabold text-navy sm:text-2xl">Send a message</h2>
             <p className="mt-2 text-sm text-muted">
-              Fill in the form below — your email app will open so you can send the message to our
-              team.
+              Messages are delivered to{' '}
+              <span className="font-semibold text-navy">{contactInfo.email}</span>.
             </p>
             <div className="mt-6 space-y-4">
               <Input label="Your name" name="name" required placeholder="Arun Kumar" />
@@ -240,7 +269,7 @@ export function ContactPage() {
                 />
               </div>
             </div>
-            <Button type="submit" className="mt-6 w-full gap-2">
+            <Button type="submit" loading={sending} className="mt-6 w-full gap-2">
               Send message
               <Send className="h-4 w-4" aria-hidden />
             </Button>
